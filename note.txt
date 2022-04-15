@@ -1,0 +1,96 @@
+[1, 0xA] = 2
+eax = # of char enter
+n digits were entered
+
+dec eax
+mov eac, eax
+mov eax, 1
+.loop:
+mov ebx, [buf + ecx - 1]
+sub ebx, 48
+; store eax somewhere
+mul ebx => eax *= ebx
+; store ebx someplace
+; load eax from storage place
+; move ebx 10
+mul ebx
+
+mov ebx, 10
+loop
+idiv ebx => edx get remainder, eax get quotient => edx get stored
+cmp eax, 0
+jne .loop
+
+x86_32bits
+
+reverse_number_for_output:
+    mov     ecx, [fibLen]                                   ; set the LOOP value
+    mov     esi, fib                                        ; move fibonacci address into esi
+    .fib_loop:
+        mov     [looper], ecx                               ; store the looping number into looper
+        mov     eax, 0                                      ; move 0 into eax for initalize reversed_number
+        mov     [revd], eax                                 ; set reversed_number = 0
+        mov     ecx, [cur_fib]                              ; get current fibonacci sequence index
+        mov     eax, [esi + ecx]                            ; get fib[i] and move that number into eax
+        add     ecx, 4                                      ; move the index to next one
+        mov     [cur_fib], ecx                              ; store the moved index into cur_fib
+        .loop_for_reverse:
+            xor     edx, edx                                ; clean the edx to avoid encounter signal SIGFPE
+            mov     ebx, 10                                 ; move 10 into ebx
+            div     ebx                                     ; do edx = eax % ebx and eax /= ebx
+            mov     [dig], edx                              ; temporary store the remainder into dig
+            mov     [orig], eax                             ; temporary store the original value into orig
+            mov     eax, [revd]                             ; move the reverse number into eax
+            mov     ebx, 10                                 ; move 10 into ebx
+            mul     ebx                                     ; do eax *= ebx
+            add     eax, [dig]                              ; do eax += dig
+            mov     [revd], eax                             ; save the modified current reverse number
+            mov     eax, [orig]                             ; grab the remain original number from orig into eax
+            cmp     eax, 0                                  ; compare eax with 0
+            jne     .loop_for_reverse                       ; if eax != 0, jump to the beginning of the loop_for_reverse
+        mov     esi, fib_rev                                ; move reversed fibonacci sequence address into esi
+        mov     eax, [revd]                                 ; move reseversed number into eax
+        mov     ecx, [cur_o]                                ; move the index for eversed fibonacci sequence into ecx
+        mov     [esi + ecx], eax                            ; 
+        add     ecx, 4
+        mov     [cur_o], ecx
+        mov     esi, fib
+        mov     ecx, [looper]        
+        loop    .fib_loop
+
+get_output:
+    mov     eax, 0
+    mov     [cur_fib], eax
+    mov     [cur_o], eax
+    mov     ecx, [fibLen]                                   ; set the LOOP value
+    mov     esi, fib_rev                                    ; move reversed fibonacci sequence address into esi
+    .push_loop:
+        mov     [looper], ecx
+        mov     ecx, [cur_fib]
+        mov     eax, [esi + ecx]
+        add     ecx, 4
+        mov     [cur_fib], ecx
+        mov     esi, obuf
+        .loop_for_output:
+            xor     edx, edx
+            mov     ebx, 10
+            div     ebx
+            add     edx, 48
+            mov     ecx, [cur_o]
+            mov     [esi + ecx], dl
+            inc     ecx
+            mov     [cur_o], ecx
+            cmp     eax, 0
+            jne     .loop_for_output
+        mov     edx, 32
+        mov     ecx, [cur_o]
+        mov     [esi + ecx], dl
+        inc     ecx
+        mov     [cur_o], ecx
+        mov     esi, fib_rev
+        mov     ecx, [looper]        
+        loop    .fib_loop
+    mov     esi, obuf
+    mov     edx, 10t
+    mov     ecx, [cur_o]
+    mov     [esi + ecx], dl
