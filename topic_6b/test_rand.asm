@@ -19,7 +19,6 @@ extern      rand
 
 _start:
     call    current_time
-    mov     [curVal], eax
     mov     ebx, buf
     mov     ecx, buf_sz
     call    itoa
@@ -45,6 +44,6 @@ _start:
 section     .bss
     buf:        resb    2048
     buf_sz:     equ     $ - buf
-    curVal:     resd    1
 
 section     .data
+    curVal:     dd      1
