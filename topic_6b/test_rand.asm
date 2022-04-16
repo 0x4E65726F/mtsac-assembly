@@ -27,8 +27,6 @@ _start:
     call    print_string
     call    endl
     
-    mov     eax, [curVal]
-    call    srand
     call    rand
     mov     ebx, buf
     mov     ecx, buf_sz

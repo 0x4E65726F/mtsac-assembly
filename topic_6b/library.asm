@@ -3,10 +3,10 @@ section     .data
     err_sz:     equ     $ - errMsg
     endline:    db      0x0A
     seed:       dd      1
-    const_a:    equ     1103515245
-    const_b:    equ     12345
-    const_c:    equ     65536
-    const_d:    equ     32768
+    const_a:    dd      1103515245
+    const_b:    dd      12345
+    const_c:    dd      65536
+    const_d:    dd      32768
 
 section     .text
 
@@ -259,10 +259,14 @@ rand:
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
     push    ebx                 ; preserve
+    push    ecx
     push    edx
+    xor     eax, eax
+    xor     ebx, ebx
+    xor     ecx, ecx
+    xor     edx, edx
     mov     eax, [seed]
     mov     ebx, [const_a]
-    xor     edx, edx
     mul     ebx
     add     eax, [const_b]
     mov     [seed], eax
@@ -274,9 +278,35 @@ rand:
     idiv    ebx
     mov     eax, edx
     pop     edx
+    pop     ecx
     pop     ebx
     ret
 ; End rand ------------------------------------------------------------------------------
+
+get_next:
+    ret
+
+display_error:
+    ret
+
+;----------------------------------------------------------------------------------------
+is_digit:
+; 
+; Generate a random number
+; Receives: AL = character we need to check
+; Returns: 	ZF = Zero Flag
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    cmp     al, '0' ; ZF = 0
+    jb      ID1
+    cmp     al, '9' ; ZF = 0
+    ja      ID1
+    test    ax, 0 ; ZF = 1
+    
+    ID1:
+    ret
+; End is_digit --------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
 legal_string_input:
@@ -297,25 +327,23 @@ legal_string_input:
     xor     eax, eax            ; eax holds running product (set to 0)
 
     .loop:
-    mul     ebx                 
-    movzx   edx, byte [esi]     ; move character into edx
-    cmp     edx, 43
-    cmp     edx, 45
+    
+    .state_a:
+    call    get_next
+    cmp     al, '+'             ; leading plus sign?
+    je      .state_b            ; go to State B
+    cmp     al, '-'             ; leading minus sign?
+    je      .state_b            ; go to State B
+    call    is_digit            ; returns ZF = 1 if AL = digit
+    jz      .state_c            ; go to State C
+    call    display_error       ; invalid input found
+    jmp     .exit
 
-    add     eax, edx            ; char to running product
-    sub     eax, 48             ; character to digit constant
-    inc     esi                 ; increment pointer
-    loop    .loop
-    jmp     .success
+    .state_b:
 
-    .err:
-    mov     eax, errMsg
-    mov     ebx, err_sz
-    call    print_string
-    mov     eax, 1
-    call    exit
+    .state_c:
 
-    .success:
+    .exit:
     pop     edx
     pop     ebx                 ; restore
     pop     esi                 ; restore
