@@ -1,17 +1,17 @@
 section     .bss
     isNeg:      resb    1
-    numArray:   resb    1024
-    num_sz:     equ     $ - numArray
+    numArray:   resb    4
+    num_sz:     resd    1
 
 section     .data
     errMsg:     db      "Error: invalid integer input", 0x0A
     err_sz:     equ     $ - errMsg
     endline:    db      0x0A
     seed:       dd      1
-    const_a:    dd      1103515245
-    const_b:    dd      12345
-    const_c:    dd      65536
-    const_d:    dd      32768
+    const_a:    equ     1103515245
+    const_b:    equ     12345
+    const_c:    equ     65536
+    const_d:    equ     32768
 
 section     .text
 
@@ -182,7 +182,7 @@ atoi:
 ;----------------------------------------------------------------------------------------
 itoa:
 ; 
-; Convert aan unsigned integer to a string representation
+; Convert an unsigned integer to a string representation
 ; Receives: EAX = the integer to be converted
 ; 			EBX = the address of the string
 ;           ECX = the size of the string
@@ -264,27 +264,29 @@ rand:
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
     push    ebx                 ; preserve
-    push    ecx
-    push    edx
-    xor     eax, eax
-    xor     ebx, ebx
-    xor     ecx, ecx
-    xor     edx, edx
-    mov     eax, [seed]
-    mov     ebx, [const_a]
-    mul     ebx
-    add     eax, [const_b]
-    mov     [seed], eax
-    mov     ebx, [const_c]
-    xor     edx, edx
-    idiv    ebx
-    mov     ebx, [const_d]
-    xor     edx, edx
-    idiv    ebx
-    mov     eax, edx
-    pop     edx
-    pop     ecx
-    pop     ebx
+    push    ecx                 ; preserve
+    push    edx                 ; preserve
+    xor     eax, eax            ; initalize eax to 0
+    xor     ebx, ebx            ; initalize ebx to 0
+    xor     ecx, ecx            ; initalize ecx to 0
+    xor     edx, edx            ; initalize edx to 0
+    mov     eax, [seed]         ; eax = seed
+    mov     ebx, const_a        ; ebx = 1103515245
+    mul     ebx                 ; eax *= ebx
+    add     eax, const_b        ; eax += 12345
+    mov     [seed], eax         ; store the new seed number
+    xor     ebx, ebx            ; initalize ebx to 0
+    mov     ebx, const_c        ; ebx = 65536
+    xor     edx, edx            ; initalize edx to 0
+    idiv    ebx                 ; eax /= ebx, edx get remainder
+    xor     ebx, ebx            ; initalize ebx to 0
+    mov     ebx, const_d        ; ebx = 32768
+    xor     edx, edx            ; initalize edx to 0
+    idiv    ebx                 ; eax /= ebx, edx get remainder
+    mov     eax, edx            ; move edx into eax
+    pop     edx                 ; restore
+    pop     ecx                 ; restore
+    pop     ebx                 ; restore
     ret
 ; End rand ------------------------------------------------------------------------------
 
@@ -326,11 +328,11 @@ is_digit:
 ; Requires:	Nothing
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
-    cmp     al, '0' ; ZF = 0
+    cmp     al, '0'             ; ZF = 0
     jb      ID1
-    cmp     al, '9' ; ZF = 0
+    cmp     al, '9'             ; ZF = 0
     ja      ID1
-    test    ax, 0 ; ZF = 1
+    test    ax, 0               ; ZF = 1
     
     ID1:
     ret
@@ -348,10 +350,10 @@ legal_string_input:
 ;----------------------------------------------------------------------------------------
     push    esi                 ; preserve
     push    ebx                 ; preserve
-    push    edx
+    push    edx                 ; preserve
 
     mov     esi, eax            ; esi is pointer to array
-    mov     edi, numArray       ; edi is the array for number
+    mov     edi, eax            ; edi is the array for number
     mov     ecx, ebx            ; ecx holds counter (number of chars)
     xor     eax, eax            ; eax holds running product (set to 0)
 
@@ -369,28 +371,30 @@ legal_string_input:
     jmp     .exit
 
     .state_b:
-    sub     al, '+'
-    mov     byte [isNeg], al
+    cmp     ecx, ebx            ; see the character is the first one or not
+    je      .continue_b         ; if legal, continue work in state_b
+    call    display_error       ; invalid input found
+    jmp     .exit
+    .continue_b:
+    sub     al, '+'             ; subtract al with '+'
+    inc     edi                 ; increase one byte in edi for atoi convert
+    dec     ebx                 ; decrease one byte in ebx for atoi convert
+    mov     byte [isNeg], al    ; move the subtract result into isNeg
     jmp     .state_d
 
     .state_c:
-    mov     byte [edi], al
-    inc     edi
-    jmp     .state_d
-
     .state_d:
-    loop    .loop
-    mov     eax, numArray
-    mov     ebx, num_sz
-    call    itoa
-    mov     bl, [isNeg]
-    cmp     bl, 0
-    je      .isPos
-    neg     eax
+    loop    .loop               
+    mov     eax, edi            ; move the address edi into eax
+    call    atoi
+    mov     bl, [isNeg]         ; move isNeg number into bl, it should be either 0 or 2
+    cmp     bl, 0               ; check bl if it has been subtracted by '+'
+    je      .isPos              ; jump if bl == 0
+    neg     eax                 ; change number in eax to negative
 
     .isPos:
     .exit:
-    pop     edx
+    pop     edx                 ; restore
     pop     ebx                 ; restore
     pop     esi                 ; restore
     ret

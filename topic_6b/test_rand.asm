@@ -18,21 +18,14 @@ extern      srand
 extern      rand
 
 _start:
-    call    current_time
-    mov     ebx, buf
+    call    current_time            ; Get current time and store in EAX
+    call    srand                   ; seed = EAX
+    call    rand                    ; EAX = random number
+    mov     ebx, buf                
     mov     ecx, buf_sz
     call    itoa
+    mov     ebx, eax
     mov     eax, buf
-    mov     ebx, buf_sz
-    call    print_string
-    call    endl
-    
-    call    rand
-    mov     ebx, buf
-    mov     ecx, buf_sz
-    call    itoa
-    mov     eax, buf
-    mov     ebx, buf_sz
     call    print_string
     call    endl
 
