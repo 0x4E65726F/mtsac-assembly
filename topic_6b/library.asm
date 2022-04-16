@@ -1,5 +1,10 @@
+section     .bss
+    isNeg:      resb    1
+    numArray:   resb    1024
+    num_sz:     equ     $ - numArray
+
 section     .data
-    errMsg:     db      "Error: exit code 1", 0x0A
+    errMsg:     db      "Error: invalid integer input", 0x0A
     err_sz:     equ     $ - errMsg
     endline:    db      0x0A
     seed:       dd      1
@@ -119,14 +124,14 @@ reverse_string:
 	mov 	ecx, ebx            ; set ecx as counter
 	mov 	edi, esi            ; store address in edi for write loop
 	
-read:
+    read:
 	.loop:
 	movzx 	dx, byte [esi]      ; mov char into dx
 	push 	dx                  ; push char on stack
 	inc 	esi                 ; increment pointer
 	loop 	.loop
 	
-write:
+    write:
 	mov 	ecx, ebx            ; reset counter
 	.loop:
 	pop 	dx                  ; pop char from stack
@@ -143,7 +148,7 @@ write:
 ;----------------------------------------------------------------------------------------
 atoi:
 ; 
-; COnvert a string representation of an unsigned integer to an integer
+; Convert a string representation of an unsigned integer to an integer
 ; Receives: EAX = the address of the string
 ; 			EBX = the size of the string
 ; Returns: 	EAX = the unsigned integer value
@@ -283,11 +288,34 @@ rand:
     ret
 ; End rand ------------------------------------------------------------------------------
 
+;----------------------------------------------------------------------------------------
 get_next:
+; 
+; Get the character value from ESI and then move ESI to next one
+; Receives: ESI = Pointer to character
+; Returns: 	AL = the character
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    mov     al, byte [esi]
+    inc     esi
     ret
+; End get_next --------------------------------------------------------------------------
 
+;----------------------------------------------------------------------------------------
 display_error:
+; 
+; Display the error message
+; Receives: Nothing
+; Returns: 	Nothing
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    mov     eax, errMsg
+    mov     ebx, err_sz
+    call    print_string
     ret
+; End display_error ---------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
 is_digit:
@@ -312,7 +340,8 @@ is_digit:
 legal_string_input:
 ; 
 ; Get and return the current time in seconds since Unix EPOCH (Jan 1, 1970)
-; Receives: Nothing
+; Receives: EAX = the address of the string
+; 			EBX = the size of the string
 ; Returns: 	EAX = integer value for time in secs
 ; Requires:	Nothing
 ; Note:     Nothing
@@ -322,8 +351,8 @@ legal_string_input:
     push    edx
 
     mov     esi, eax            ; esi is pointer to array
+    mov     edi, numArray       ; edi is the array for number
     mov     ecx, ebx            ; ecx holds counter (number of chars)
-    mov     ebx, 10             ; ebx is const multiplier
     xor     eax, eax            ; eax holds running product (set to 0)
 
     .loop:
@@ -340,9 +369,26 @@ legal_string_input:
     jmp     .exit
 
     .state_b:
+    sub     al, '+'
+    mov     byte [isNeg], al
+    jmp     .state_d
 
     .state_c:
+    mov     byte [edi], al
+    inc     edi
+    jmp     .state_d
 
+    .state_d:
+    loop    .loop
+    mov     eax, numArray
+    mov     ebx, num_sz
+    call    itoa
+    mov     bl, [isNeg]
+    cmp     bl, 0
+    je      .isPos
+    neg     eax
+
+    .isPos:
     .exit:
     pop     edx
     pop     ebx                 ; restore
