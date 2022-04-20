@@ -2,6 +2,7 @@ section     .bss
     isNeg:      resb    1
     numArray:   resb    4
     num_sz:     resd    1
+    temp:       resd    1
 
 section     .data
     errMsg:     db      "Error: invalid integer input", 0x0A
@@ -404,17 +405,15 @@ legal_string_input:
 ;----------------------------------------------------------------------------------------
 pow:
 ; 
-; Get and return the current time in seconds since Unix EPOCH (Jan 1, 1970)
-; Receives: EAX = the address of the string
-; 			EBX = the size of the string
-; Returns: 	EAX = integer value for time in secs
+; A power procedure that will implement the power function
+; Receives: EAX = the base value to be exponentiated
+; 			EBX = the exponent of the operation
+; Returns: 	EAX = the product value
+;           EDX = the product value
 ; Requires:	Nothing
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
-    push    ecx
-    push    edx
-
-    push    eax
+    mov     [temp], eax
     xor     edx, edx
     xor     ecx, ecx
     mov     eax, 1
@@ -426,6 +425,10 @@ pow:
     mul     eax
     shl     ebx, 1
     jnc     .not1
+    push    ebx
+    mov     ebx, [temp]
+    mul     ebx
+    pop     ebx
          
     .not1:
     loop    .loop

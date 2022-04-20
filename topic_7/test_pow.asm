@@ -13,50 +13,44 @@ extern      get_input
 extern      exit
 extern      atoi
 extern      itoa
-extern      legal_string_input
+extern      pow
 
 _start:
-    mov     eax, testStr1
-    mov     ebx, sz_1
-    call    legal_string_input
+    mov     eax, basebuf
+    mov     ebx, basebuf_sz
+    call    get_input
+    call    atoi
+    mov     [base], eax
 
-    mov     eax, testStr2           
-    mov     ebx, sz_2
-    call    legal_string_input
+    mov     eax, expbuf
+    mov     ebx, expbuf_sz
+    call    get_input
+    call    atoi
+    mov     [exp], eax
 
-    mov     eax, testStr3           
-    mov     ebx, sz_3
-    call    legal_string_input
+    mov     eax, [base]
+    mov     ebx, [exp]
 
-    mov     eax, testStr4           
-    mov     ebx, sz_4
-    call    legal_string_input
-
-    mov     eax, testStr5           
-    mov     ebx, sz_5
-    call    legal_string_input
-
-    mov     eax, testStr6           
-    mov     ebx, sz_6
-    call    legal_string_input
+    mov     ebx, obuf
+    mov     ecx, obuf_sz
+    call    itoa
+    mov     eax, obuf
+    mov     ebx, obuf_sz
+    call    print_string
+    call    endl
 
     mov     eax, 0                  
     call    exit
 
 section     .bss
-    buf:        resb    2048
-    buf_sz:     equ     $ - buf
+    basebuf:    resb    10
+    basebuf_sz: equ     $ - buf
+    expbuf:     resb    10
+    expbuf_sz:  equ     $ - buf
+    obuf:       resb    1024
+    obuf_sz:    equ     $ - buf
+    base:       resd    1
+    exp:        resd    1
 
 section     .data
-    testStr1:   db      "123"           ; b 23 for first test result
-    sz_1:       equ     $ - testStr1
-    testStr2:   db      "+1234"         ; b 27 for second result
-    sz_2:       equ     $ - testStr2
-    testStr3:   db      "-1234"         ; b 31 for third result
-    sz_3:       equ     $ - testStr3
-    testStr4:   db      "a123"          ; b 35 for forth result
-    sz_4:       equ     $ - testStr4
-    testStr5:   db      "123a"          ; b 39 for fifth result
-    sz_5:       equ     $ - testStr5
-    testStr6:   db      "12-3"          ; b 43 for sixth result
-    sz_6:       equ     $ - testStr6
+    
