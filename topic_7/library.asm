@@ -413,22 +413,21 @@ pow:
 ; Requires:	Nothing
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
-    mov     [temp], eax
-    xor     edx, edx
-    xor     ecx, ecx
-    mov     eax, 1
-    mov     ecx, 0
+    mov     [temp], eax         ; temporary store the base value
+    xor     edx, edx            ; initalize edx value to 0
+    xor     ecx, ecx            ; initalize ecx value to 0
+    mov     eax, 1              ; move product value into eax, initally be 1
     
     .loop:
-    cmp     ebx, 0
-    je      .exit
-    mul     eax
-    shl     ebx, 1
-    jnc     .not1
-    push    ebx
-    mov     ebx, [temp]
-    mul     ebx
-    pop     ebx
+    cmp     ebx, 0              ; compare exponent with zero
+    je      .exit               ; if equal, exit the loop, we have no bits can shift
+    mul     eax                 ; square eax
+    shl     ebx, 1              ; shift ebx to left by 1, get MSB in CF
+    jnc     .not1               ; if CF == 1, do the following steps
+    push    ebx                 ; push exp value into stack
+    mov     ebx, [temp]         ; move base value into ebx
+    mul     ebx                 ; multiply eax and ebx
+    pop     ebx                 ; get the exp value back from stack
          
     .not1:
     loop    .loop
