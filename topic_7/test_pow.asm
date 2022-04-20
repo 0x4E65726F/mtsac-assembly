@@ -16,21 +16,38 @@ extern      itoa
 extern      pow
 
 _start:
-    mov     eax, basebuf
-    mov     ebx, basebuf_sz
+    .get_base:
+    mov     eax, prompt_a
+    mov     ebx, plen_a
+    call    print_string
+    mov     eax, ibuf
+    mov     ebx, ibuf_sz
     call    get_input
+    mov     ebx, eax
+    dec     ebx
+    mov     eax, ibuf
     call    atoi
     mov     [base], eax
 
-    mov     eax, expbuf
-    mov     ebx, expbuf_sz
+    .get_exp:
+    mov     eax, prompt_b
+    mov     ebx, plen_b
+    call    print_string
+    mov     eax, ibuf
+    mov     ebx, ibuf_sz
     call    get_input
+    mov     ebx, eax
+    dec     ebx
+    mov     eax, ibuf
     call    atoi
     mov     [exp], eax
 
+    .calc:
     mov     eax, [base]
     mov     ebx, [exp]
+    call    pow
 
+    .output_result:
     mov     ebx, obuf
     mov     ecx, obuf_sz
     call    itoa
@@ -43,14 +60,15 @@ _start:
     call    exit
 
 section     .bss
-    basebuf:    resb    10
-    basebuf_sz: equ     $ - buf
-    expbuf:     resb    10
-    expbuf_sz:  equ     $ - buf
-    obuf:       resb    1024
-    obuf_sz:    equ     $ - buf
+    ibuf:       resb    10
+    ibuf_sz:    equ     $ - ibuf
+    obuf:       resb    10
+    obuf_sz:    equ     $ - obuf
     base:       resd    1
     exp:        resd    1
 
 section     .data
-    
+    prompt_a:   db      'Enter base value: ' 
+    plen_a:     equ     $ - prompt_a
+    prompt_b:   db      'Enter exponent value: ' 
+    plen_b:     equ     $ - prompt_b
