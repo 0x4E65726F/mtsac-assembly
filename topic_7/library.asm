@@ -415,14 +415,12 @@ pow:
 ;----------------------------------------------------------------------------------------
     mov     [temp], eax         ; temporary store the base value
     xor     edx, edx            ; initalize edx value to 0
-    xor     ecx, ecx            ; initalize ecx value to 0
+    mov     ecx, 16             ; initalize ecx value to 0
     mov     eax, 1              ; move product value into eax, initally be 1
     
     .loop:
-    cmp     ebx, 0              ; compare exponent with zero
-    je      .exit               ; if equal, exit the loop, we have no bits can shift
     mul     eax                 ; square eax
-    shl     ebx, 1              ; shift ebx to left by 1, get MSB in CF
+    shl     bx, 1               ; shift ebx to left by 1, get MSB in CF
     jnc     .not1               ; if CF == 1, do the following steps
     push    ebx                 ; push exp value into stack
     mov     ebx, [temp]         ; move base value into ebx
@@ -432,6 +430,5 @@ pow:
     .not1:
     loop    .loop
 
-    .exit:
     ret
 ; End pow -------------------------------------------------------------------------------
