@@ -24,7 +24,7 @@ _start:
     idiv    bx
     mov     bx, [var4]
     idiv    bx
-    mov     edx, eax
+    mov     eax, edx
 
 exit:  
     mov     ebx, 0      ; return 0 status on exit - 'No Errors'
