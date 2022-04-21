@@ -8,16 +8,19 @@ section     .text
 global      _start
 
 _start:
-    ; eax = ((var2 * 5) / (var2 - var3)) % var4
+    ; eax = ((var2 * 5) / (var2 - eax)) % var4
+    mov     eax, 0
+    push    eax
     mov     ax, [var2]
     mov     bx, [var3]
     imul    bx
     mov     cx, ax
     mov     ax, [var2]
-    sub     ax, [var3]
-    push    ax
+    pop    ebx
+    sub     ax, bx
+    push    eax
     mov     ax, cx
-    pop     bx
+    pop     ebx
     idiv    bx
     mov     bx, [var4]
     idiv    bx
