@@ -2,6 +2,7 @@ section     .text
 
 global      _start
 
+extern      exit
 extern      swap1
 extern      swap2
 
@@ -12,13 +13,11 @@ _start:
     mov     ebx, 20
     push    ebx
     call    swap1
+    call    swap2
     pop     ebx
     pop     eax
-
-exit:  
-    mov     ebx, 0      ; return 0 status on exit - 'No Errors'
-    mov     eax, 1      ; invoke SYS_EXIT (kernel opcode 1)
-    int     80h
+    mov     eax, 0
+    call    exit
 
 section     .bss
 
