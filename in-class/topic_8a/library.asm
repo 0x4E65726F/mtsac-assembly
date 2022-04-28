@@ -28,6 +28,8 @@ global      srand
 global      rand
 global      legal_string_input
 global      pow
+global      swap1
+global      swap2
 
 ;----------------------------------------------------------------------------------------
 print_string:
