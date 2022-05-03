@@ -28,7 +28,7 @@ global      srand
 global      rand
 global      legal_string_input
 global      pow
-global      swap1
+global      swap
 global      swap2
 
 ;----------------------------------------------------------------------------------------
@@ -37,12 +37,11 @@ print_string:
 ; Prints an array of characters to the console.
 ; Receives: arg1: address of the array
 ;           arg2: size of the array
-; Returns:  nothing
-; Requires: nothing
-; Notes:    none
+; Returns:  Nothing
+; Requires: Nothing
 ;----------------------------------------------------------------------------------------
     push    ebp                 ; preserve caller's base pointer
-    mov     ebx, esp            ; set base pointer for reame
+    mov     ebp, esp            ; set base pointer for frame
     
     push    ebx                 ; preserve ebx
 
@@ -62,10 +61,9 @@ print_string:
 endl:
 ;
 ; Print a next line.
-; Receives: nothing
-; Returns:  nothing
-; Requires: nothing
-; Notes:    none
+; Receives: Nothing
+; Returns:  Nothing
+; Requires: Nothing
 ;----------------------------------------------------------------------------------------
     push    eax                 ; preserve
     push    ebx                 ; preserve
@@ -88,10 +86,10 @@ get_input:
 ; Receives: arg1: address of the input array
 ;           arg2: size of the array
 ; Returns:  EAX (number of characters)
-; Requires: nothing
+; Requires: Nothing
 ;----------------------------------------------------------------------------------------
     push    ebp                 ; preserve caller's base pointer
-    mov     ebx, esp            ; set base pointer for reame
+    mov     ebp, esp            ; set base pointer for frame
     
     push    ebx                 ; preserve
 
@@ -110,13 +108,15 @@ get_input:
 ;----------------------------------------------------------------------------------------
 exit:  
 ;
-; Terminates the program gracefully
-; Receives: EAX = exit code
-; Returns:  nothing
-; Requires: nothing
-; Notes:    none
+; Exits the program gracefully
+; Receives: arg1: exit code
+; Returns:  Nothing
+; Requires: Nothing
 ;----------------------------------------------------------------------------------------
-    mov     ebx, eax            ; return status on exit
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    
+    mov     ebx, [ebp + 8]      ; return status on exit
     mov     eax, 1              ; invoke SYS_EXIT (kernel opcode 1)
     int     80h
 ; End exit ------------------------------------------------------------------------------
@@ -125,36 +125,39 @@ exit:
 reverse_string:
 ; 
 ; Reverse an array of characters
-; Receives: EAX (address of the array)
-; 			EBX (size of the array)
+; Receives: arg1: address of the array
+; 			arg2: size of the array
 ; Returns: 	Nothing
 ; Requires:	Nothing
 ;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+
 	push	esi                 ; preserve
 	push 	edi                 ; preserve
-	push 	ebx                 ; preserve
-	mov 	esi, eax            ; set esi as pointer
-	mov 	ecx, ebx            ; set ecx as counter
+
+	mov 	esi, [ebp + 8]      ; set esi as pointer
+	mov 	ecx, [ebp + 12]     ; set ecx as counter
 	mov 	edi, esi            ; store address in edi for write loop
 	
-    read:
+read:
 	.loop:
 	movzx 	dx, byte [esi]      ; mov char into dx
 	push 	dx                  ; push char on stack
 	inc 	esi                 ; increment pointer
 	loop 	.loop
 	
-    write:
-	mov 	ecx, ebx            ; reset counter
+write:
+	mov 	ecx, [ebp + 12]     ; reset counter
 	.loop:
 	pop 	dx                  ; pop char from stack
 	mov 	[edi], dl           ; store it in string
 	inc 	edi                 ; increment pointer
 	loop 	.loop
 	
-	pop		ebx                 ; restore
 	pop 	edi                 ; restore
 	pop 	esi                 ; restore
+    pop     ebp                 ; restore caller's base pointer
 	ret
 ; End reverse_string --------------------------------------------------------------------
 
@@ -162,20 +165,23 @@ reverse_string:
 atoi:
 ; 
 ; Convert a string representation of an unsigned integer to an integer
-; Receives: EAX = the address of the string
-; 			EBX = the size of the string
-; Returns: 	EAX = the unsigned integer value
+; Receives: arg1: the address of the string
+; 			arg2: the size of the string
+; Returns: 	EAX: the unsigned integer value
 ; Requires:	Nothing
 ; Note:     Horner's polynomial method
 ;           tmp = 0
 ;           for each char (left to right)
 ;               tmp = 10 * tmp + (char_val - 48) (converts vhar to digit)
 ;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+
     push    esi                 ; preserve
     push    ebx                 ; preserve
 
-    mov     esi, eax            ; esi is pointer to array
-    mov     ecx, ebx            ; ecx holds counter (number of chars)
+    mov     esi, [ebp + 8]      ; esi is pointer to array
+    mov     ecx, [ebp + 12]     ; ecx holds counter (number of chars)
     mov     ebx, 10             ; ebx is const multiplier
     xor     eax, eax            ; eax holds running product (set to 0)
 
@@ -189,6 +195,7 @@ atoi:
 
     pop     ebx                 ; restore
     pop     esi                 ; restore
+    pop     ebp                 ; restore caller's base pointer
     ret
 ; End atoi ------------------------------------------------------------------------------
 
@@ -196,20 +203,27 @@ atoi:
 itoa:
 ; 
 ; Convert an unsigned integer to a string representation
-; Receives: EAX = the integer to be converted
-; 			EBX = the address of the string
-;           ECX = the size of the string
+; Receives: arg1: the integer to be converted
+; 			arg2: the address of the string
+;           arg3: the size of the string
 ; Returns: 	EAX = the number of chars added to the string
 ; Requires:	Nothing
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    sub     esp, 4              ; allocate temp var
+    mov     [ebp - 4], dword 0  ; init temp to 0
+    
     push    ebx                 ; preserve
+    push    ecx                 ; preserve
     push    esi                 ; preserve
     push    edi                 ; preserve
-    push    dword 0             ; create a counter var
+    mov     eax, [ebp + 8]      ; move arg1 into eax for conversion
 
-    mov     esi, ebx            ; set esi as pointer
-    mov     edi, ebx            ; set edi as pointer
+    mov     esi, [ebp + 12]     ; set esi as pointer
+    mov     edi, [ebp + 12]     ; set edi as pointer
+    mov     eax, [ebp + 16]     ; move arg3 (array size) into ecx
     mov     ebx, 10             ; ebx i divisor
 
     .loop:
@@ -217,22 +231,26 @@ itoa:
     idiv    ebx                 ; divide number
     add     edx, 48             ; get character from remainder
     mov     [esi], edx          ; store the character
-    inc     dword [esp]         ; increment counter
+    inc     dword [ebp - 4]     ; increment counter
     cmp     eax, 0              ; eax <=> 0 ?
     je      .break              ; if eax == 0 then break from loop
     inc     esi                 ; increment pointer
     loop    .loop
 
     .break:
-    mov     eax, edi
-    mov     ebx, [esp]
+    push    dword [ebp - 4]     ; agr2 for rev_str call
+    push    edi                 ; arg1 for rev_str call
     call    reverse_string
+    add     esp, 8
 
-    mov     eax, ebx            ; ebx should still hold counter
-    add     esp, 4              ; remove counter
+    mov     eax, [ebp - 4]      ; ebx should still hold counter
+    add     esp, 4              ; deallocate temp var
     pop     edi                 ; restore
     pop     esi                 ; restore
+    pop     ecx                 ; restore
     pop     ebx                 ; restore
+
+    pop     ebp                 ; restore caller's base pointer
     ret
 ; End itoa ------------------------------------------------------------------------------
 
@@ -457,41 +475,37 @@ pow:
 ; End pow -------------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
-swap1:
+swap:
 ; 
-; Swap two values
-; Receives: REF x
-;           REF y
+; Swaps the values at two addresses 
+; Receives: arg1: address 1
+;           arg2: address 2
 ; Returns: 	Nothing
 ; Requires: Nothing
-; Note:     Nothing
-; Algo:     Nothing
 ;----------------------------------------------------------------------------------------
     
-    push    ebp
-    mov     ebp, esp
-    sub     esp, 4
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base of frame
+    sub     esp, 4              ; allocate temp var
 
-    push    esi
-    push    edi
+    mov     eax, [ebp + 8]      ; get address of arg1
+    mov     eax, [eax]          ; get val at arg1
+    mov     [ebp - 4], eax      ; store val in temp
+    mov     eax, [ebp + 12]     ; get address of arg2
+    mov     eax, [eax]          ; get val at arg2
+    xchg    eax, [ebp - 4]      ; swap values
 
-    lea     esi, [ebp + 12]     ; Store address for REF x
-    lea     edi, [ebp + 8]      ; Store address for REF y
-    
-    mov     eax, [esi]
-    mov     dword [ebp - 4], eax
-    mov     eax, [edi]
-    mov     [esi], eax
-    mov     eax, dword [ebp - 4]
-    mov     [edi], eax
+    mov     edx, [ebp + 12]     ; move address of arg1 into edx
+    mov     [edx], eax          ; move into address of arg1 val in eax
+    mov     edx, [ebp - 4]      ; move val in temp into edx
+    mov     eax, [ebp + 8]      ; move address of arg2 into eax
+    mov     [eax], edx          ; move val in edx to address of arg2
 
-    pop     edi
-    pop     esi
-
-    leave
+    mov     esp, ebp            ; deallocate temp var
+    pop     ebp                 ; restore caller's base pointer
     ret
 
-; End swap1 -----------------------------------------------------------------------------
+; End swap ------------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
 swap2:
