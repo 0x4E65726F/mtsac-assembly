@@ -18,14 +18,13 @@ _start:
     push    dword str_sz        ; push arg2 the size of the string
     push    str                 ; push arg1 the address of the string
     call    print_string        
-    mov     esp, ebp            ; deallocate stack space from args
 
-    ;dec     dword [esp + 4]
-    ;call    reverse_string
-    ;inc     eax
-    ;mov     [esp + 4], eax
+    dec     dword [esp + 4]
+    call    reverse_string
+    inc     eax
+    mov     [esp + 4], eax
 
-    ;call    print_string
+    call    print_string
     add     esp, 8
 
     push    val1
