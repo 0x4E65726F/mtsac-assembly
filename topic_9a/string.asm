@@ -84,9 +84,13 @@ string_copy:
 ;----------------------------------------------------------------------------------------
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; set base pointer for frame
-
+    push    esi                 ; preserve esi
+    push    edi                 ; preserve edi
+    
     
 
+    pop     edi                 ; restore edi
+    pop     esi                 ; restore esi
     pop     ebp                 ; restore caller's base pointer
     ret
 ; End string_copy -----------------------------------------------------------------------

@@ -14,7 +14,7 @@ extern      to_lower
 extern 	    to_upper
 
 _start:
-    push    array
+    push    source
     call    print_string
 
 exit:  
@@ -25,4 +25,4 @@ exit:
 section     .bss
 
 section     .data
-    array:  db  "Hello world!", 0Ah, 0
+    source:  db  "Hello world!", 0Ah, 0
