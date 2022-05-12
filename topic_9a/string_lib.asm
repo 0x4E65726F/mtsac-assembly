@@ -29,7 +29,7 @@ size_of:
 
     .loop:
     cmp     [esi], 0            ; check if esi is at the null terminator
-    je      .exit
+    je      .end
     inc     eax                 ; one character found, ++size
     inc     esi                 ; check the next character
     jmp     .loop
