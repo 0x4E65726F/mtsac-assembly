@@ -28,7 +28,7 @@ size_of:
     mov     eax, 0              ; size number start at zero
 
     .loop:
-    cmp     [esi], 0            ; check if esi is at the null terminator
+    cmp     [esi], byte 0       ; check if esi is at the null terminator
     je      .end
     inc     eax                 ; one character found, ++size
     inc     esi                 ; check the next character
