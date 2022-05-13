@@ -29,7 +29,7 @@ size_of:
     mov     ecx, -1             ; size number start at zero
 
     mov     al, 0               ; check if esi is at the null terminator
-    repe    scasb               ; repeat while the null terminator has been found
+    repne   scasb               ; repeat while the null terminator has not been found
     neg     ecx                 ; change ecx from negative to positive
     dec     ecx
     mov     eax, ecx            ; move size number into eax
