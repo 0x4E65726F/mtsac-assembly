@@ -7,7 +7,7 @@ main.o: main.asm
 	nasm -f elf -g main.asm
 
 string.o: string.asm
-	nasm -f elf -g string_lab.asm
+	nasm -f elf -g string.asm
 
 clean:
 	rm main string.o main.o
