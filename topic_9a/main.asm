@@ -15,7 +15,7 @@ extern 	    to_upper
 
 _start:
     mov     esi, source
-    mov     edi, edstination
+    mov     edi, dest
 
     push    esi
     call    print_string
