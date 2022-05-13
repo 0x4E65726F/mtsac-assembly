@@ -21,7 +21,17 @@ _start:
     call    print_string
     pop     esi
 
+    push    edi
+    push    esi
+    call    string_copy
+    pop     esi
+    pop     edi
 
+    push    edi
+    call    print_string
+    pop     edi
+
+    
 
 exit:  
     mov     ebx, 0      ; return 0 status on exit - 'No Errors'
