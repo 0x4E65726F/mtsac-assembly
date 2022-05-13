@@ -26,12 +26,11 @@ size_of:
     push    ecx                 ; preserve ecx
 
     mov     edi, [ebp + 8]      ; move arg1 into esi (address of the string)
-    mov     ecx, -1             ; size number start at zero
+    mov     ecx, 0              ; size number start at zero
 
     mov     al, 0               ; check if esi is at the null terminator
     repne   scasb               ; repeat while the null terminator has not been found
     neg     ecx                 ; change ecx from negative to positive
-    dec     ecx
     mov     eax, ecx            ; move size number into eax
 
     pop     ecx                 ; restore ecx
