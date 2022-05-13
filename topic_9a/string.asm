@@ -26,11 +26,11 @@ size_of:
     push    ecx                 ; preserve ecx
 
     mov     edi, [ebp + 8]      ; move arg1 into esi (address of the string)
-    mov     ecx, 0              ; size number start at zero
-
-    mov     al, 0               ; check if esi is at the null terminator
+    mov     ecx, -1             ; size start at -1 to make sure repeat won't end at first
+    mov     al, 0               ; check if edi is at the null terminator
     repne   scasb               ; repeat while the null terminator has not been found
     neg     ecx                 ; change ecx from negative to positive
+    dec     ecx                 ; decrease -1 that we add at beginning
     mov     eax, ecx            ; move size number into eax
 
     pop     ecx                 ; restore ecx
@@ -58,6 +58,7 @@ print_string:
     mov     ecx, [ebp + 8]      ; move arg1 into ecx (address of the string)
     push    ecx                 ; push ecx into stack for procedure call
     call    size_of             ; get size of the string
+    pop     ecx                 ; get ecx back
     mov     edx, eax            ; move size of the string into edx
     mov     eax, 4              ; set stream as stdout
     mov     ebx, 1              ; set write code
@@ -85,9 +86,20 @@ string_copy:
     mov     ebp, esp            ; set base pointer for frame
     push    esi                 ; preserve esi
     push    edi                 ; preserve edi
+    push    eax                 ; preserve eax
+    push    ecx                 ; preserve ecx
     
-    
+    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the source string)
+    mov     edi, [ebp + 12]     ; move arg2 into esi (address of the destination string)
+    push    esi                 ; push esi into stack for procedure call
+    call    size_of             ; get size of the string
+    pop     esi                 ; get esi back
+    mov     ecx, eax            ; move size of the string into ecx
+    inc     ecx                 ; include the null terminator
+    rep     movsb               ; copy all characters from source to target
 
+    pop     ecx                 ; restore ecx
+    pop     eax                 ; restore eax
     pop     edi                 ; restore edi
     pop     esi                 ; restore esi
     pop     ebp                 ; restore caller's base pointer

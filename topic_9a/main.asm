@@ -14,8 +14,14 @@ extern      to_lower
 extern 	    to_upper
 
 _start:
-    push    source
+    mov     esi, source
+    mov     edi, edstination
+
+    push    esi
     call    print_string
+    pop     esi
+
+
 
 exit:  
     mov     ebx, 0      ; return 0 status on exit - 'No Errors'
@@ -23,6 +29,7 @@ exit:
     int     80h
 
 section     .bss
+    dest:       resb    20      
 
 section     .data
-    source:  db  "Hello world!", 0Ah, 0
+    source:     db      "Hello world!", 0Ah, 0
