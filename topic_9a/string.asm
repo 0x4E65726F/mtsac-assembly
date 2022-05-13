@@ -22,20 +22,19 @@ size_of:
 ;----------------------------------------------------------------------------------------
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; set base pointer for frame
-    push    esi                 ; preserve esi
+    push    edi                 ; preserve esi
+    push    ecx                 ; preserve ecx
 
-    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
-    mov     eax, 0              ; size number start at zero
+    mov     edi, [ebp + 8]      ; move arg1 into esi (address of the string)
+    mov     ecx, 0              ; size number start at zero
 
-    .loop:
-    cmp     [esi], byte 0       ; check if esi is at the null terminator
-    je      .end
-    inc     eax                 ; one character found, ++size
-    inc     esi                 ; check the next character
-    jmp     .loop
+    mov     al, 0               ; check if esi is at the null terminator
+    repe    scasb               ; repeat while the null terminator has been found
+    neg     ecx                 ; change ecx from negative to positive
+    mov     eax, ecx            ; move size number into eax
 
-    .end:
-    pop     esi                 ; restore esi
+    pop     ecx                 ; restore ecx
+    pop     edi                 ; restore esi
     pop     ebp                 ; restore caller's base pointer
     ret
 ; End size_of ---------------------------------------------------------------------------
