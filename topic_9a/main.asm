@@ -14,24 +14,26 @@ extern      to_lower
 extern 	    to_upper
 
 _start:
-    mov     esi, source
-    mov     edi, dest
+    mov     esi, source     ; move source string address into esi
+    mov     edi, dest       ; move destination string address into edi
 
-    push    esi
+    push    esi             ; push arg1
     call    print_string
-    pop     esi
+    pop     esi             ; pop arg1
 
-    push    edi
-    push    esi
+    push    edi             ; push arg2
+    push    esi             ; push arg1
     call    string_copy
-    pop     esi
-    pop     edi
+    pop     esi             ; pop arg1
+    pop     edi             ; pop arg2
 
-    push    edi
+    push    edi             ; push arg1
     call    print_string
-    pop     edi
-
-    
+    call    to_upper
+    call    print_string
+    call    to_lower
+    call    print_string
+    pop     edi             ; pop arg1
 
 exit:  
     mov     ebx, 0      ; return 0 status on exit - 'No Errors'

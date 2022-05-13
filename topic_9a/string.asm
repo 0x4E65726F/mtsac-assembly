@@ -25,6 +25,7 @@ size_of:
     push    edi                 ; preserve esi
     push    ecx                 ; preserve ecx
 
+    cld                         ; direction = forward
     mov     edi, [ebp + 8]      ; move arg1 into esi (address of the string)
     mov     ecx, -1             ; size start at -1 to make sure repeat won't end at first
     mov     al, 0               ; check if edi is at the null terminator
@@ -89,6 +90,7 @@ string_copy:
     push    eax                 ; preserve eax
     push    ecx                 ; preserve ecx
     
+    cld                         ; direction = forward
     mov     esi, [ebp + 8]      ; move arg1 into esi (address of the source string)
     mov     edi, [ebp + 12]     ; move arg2 into esi (address of the destination string)
     push    esi                 ; push esi into stack for procedure call
@@ -117,9 +119,34 @@ to_lower:
 ;----------------------------------------------------------------------------------------
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; set base pointer for frame
+    push    esi                 ; preserve esi
+    push    edi                 ; preserve edi
+    push    eax                 ; preserve eax
+    push    ecx                 ; preserve ecx
 
+    cld                         ; direction = forward
+    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
+    mov     edi, esi            ; also move arg1 into edi
+    push    esi                 ; push esi into stack for procedure call
+    call    size_of             ; get size of the string
+    pop     esi                 ; get esi back
+    mov     ecx, eax            ; move size of the string into ecx
+
+    .loop:
+    lodsb                       ; copy [esi] into al
+    cmp     al, 'A'             ; see if al is smaller than 'A'
+    jb      .no_change
+    cmp     al, 'Z'             ; see if al is bigger than 'Z'
+    ja      .no_change
+    add     al, 'a' - 'A'       ; change al from upper case to lower case
+    .no_change:
+    stosb                       ; store al at [edi]
+    loop    .loop
     
-
+    pop     ecx                 ; restore ecx
+    pop     eax                 ; restore eax
+    pop     edi                 ; restore edi
+    pop     esi                 ; restore esi
     pop     ebp                 ; restore caller's base pointer
     ret
 ; End to_lower --------------------------------------------------------------------------
@@ -135,9 +162,34 @@ to_upper:
 ;----------------------------------------------------------------------------------------
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; set base pointer for frame
-
+    push    esi                 ; preserve esi
+    push    edi                 ; preserve edi
+    push    eax                 ; preserve eax
+    push    ecx                 ; preserve ecx
     
+    cld                         ; direction = forward
+    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
+    mov     edi, esi            ; also move arg1 into edi
+    push    esi                 ; push esi into stack for procedure call
+    call    size_of             ; get size of the string
+    pop     esi                 ; get esi back
+    mov     ecx, eax            ; move size of the string into ecx
 
+    .loop:
+    lodsb                       ; copy [esi] into al
+    cmp     al, 'a'             ; see if al is smaller than 'a'
+    jb      .no_change
+    cmp     al, 'z'             ; see if al is bigger than 'z'
+    ja      .no_change
+    add     al, 'A' - 'a'       ; change al from lower case to upper case
+    .no_change:
+    stosb                       ; store al at [edi]
+    loop    .loop
+
+    pop     ecx                 ; restore ecx
+    pop     eax                 ; restore eax
+    pop     edi                 ; restore edi
+    pop     esi                 ; restore esi
     pop     ebp                 ; restore caller's base pointer
     ret
 ; End to_upper --------------------------------------------------------------------------
