@@ -9,9 +9,6 @@ global      _start
 
 extern      size_of
 extern      print_string
-extern      string_copy
-extern      to_lower
-extern 	    to_upper
 
 _start:
     mov     esi, source     ; move source string address into esi
