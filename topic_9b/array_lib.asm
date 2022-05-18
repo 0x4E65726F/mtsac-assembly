@@ -120,7 +120,7 @@ bin_search_d:
 
     .skip:
     cmp     [esi + ebx], edx
-    jl      .greater                ; if array[mid] > term then go to greater
+    jg      .greater                ; if array[mid] > term then go to greater
     lea     edi, [esi + ebx - 4]    ; else array[mid] < term so last = mid - 1
     jmp     .while                  ; loop
 
