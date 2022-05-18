@@ -109,9 +109,9 @@ bin_search_d:
     jg      .wend                   ; if esi > edi then exit loop
 
     mov     ebx, edi                ; find address of mid
-    sub     ebx, esi                ; dif in bytes
-    shr     ebx, 3                  ; doubleword align
-    shl     ebx, 2                  ; mul by 2
+    sub     ebx, esi                ; dif in doubleword
+    shr     ebx, 3                  ; doubleword to byte and div by 2
+    shl     ebx, 2                  ; mul to doubleword
 
     cmp     [esi + ebx], edx        ; ? array[mid] == search term ?
     jne     .skip                   ; if not equal then skip
