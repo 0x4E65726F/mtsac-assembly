@@ -102,7 +102,7 @@ bin_search_d:
 
     mov     esi, [ebp + 8]          ; set esi = first
     mov     edi, [ebp + 12]         ; set edi = size
-    lea     edi, [esi + edi - 4]    ; set edi = effective address of last
+    lea     edi, [esi + edi]    ; set edi = effective address of last
 
     .while: 
     cmp     esi, edi                ; compare esi, edi
