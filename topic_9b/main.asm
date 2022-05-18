@@ -21,6 +21,7 @@ _start:
     push    array_sz
     push    array
     call    bin_search_d
+    mov     ebx, [eax]
 
 exit:  
     mov     ebx, 0      ; return 0 status on exit - 'No Errors'
