@@ -11,14 +11,14 @@ extern  bubble_sort_d
 extern  bin_search_d
 
 _start:
-    push    dword [array_sz]
+    push    array_sz
     push    array
     call    bubble_sort_d
 
     pop     eax
     pop     eax
     push    dword [search]
-    push    dword [array_sz]
+    push    array_sz
     push    array
     call    bin_search_d
 
