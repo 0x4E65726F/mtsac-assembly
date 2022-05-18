@@ -106,12 +106,12 @@ bin_search_d:
 
     .while: 
     cmp     esi, edi                ; compare esi, edi
-    ja      .wend                   ; if esi > edi then exit loop
+    jg      .wend                   ; if esi > edi then exit loop
 
     mov     ebx, edi                ; find address of mid
     sub     ebx, esi                ; dif in bytes
     shr     ebx, 3                  ; doubleword align
-    shl     ebx, 2                  ; mul by 2
+    shl     ebx, 1                  ; mul by 2
 
     cmp     [esi + ebx], edx        ; ? array[mid] == search term ?
     jne     .skip                   ; if not equal then skip
