@@ -33,4 +33,4 @@ section     .bss
 section     .data
     array:      dd      1, 3, 2, 5, 4, 8, 9, 6, 7
     array_sz:   equ     $ - array
-    search:     dd      5
+    search:     dd      7
