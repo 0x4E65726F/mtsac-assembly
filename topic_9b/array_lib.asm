@@ -113,15 +113,14 @@ bin_search_d:
     shr     ebx, 3                  ; doubleword align
     shl     ebx, 1                  ; mul by 2
 
-    lea     eax, [esi + edx]        ; set return value = mid
     cmp     [esi + ebx], edx        ; ? array[mid] == search term ?
     jne     .skip                   ; if not equal then skip
-    lea     eax, [esi + edx]        ; set return value = mid
+    lea     eax, [esi + ebx]        ; set return value = mid
     jmp     .wend
 
     .skip:
     cmp     [esi + ebx], edx
-    jg      .greater                ; if array[mid] > term then go to greater
+    jl      .greater                ; if array[mid] > term then go to greater
     lea     edi, [esi + ebx - 4]    ; else array[mid] < term so last = mid - 1
     jmp     .while                  ; loop
 
