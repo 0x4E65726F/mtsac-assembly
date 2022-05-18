@@ -104,7 +104,6 @@ bin_search_d:
     mov     edi, [ebp + 12]         ; set edi = size
     lea     edi, [esi + edi - 4]    ; set edi = effective address of last
 
-    lea     eax, [esi + edx]        ; set return value = mid
     .while: 
     cmp     esi, edi                ; compare esi, edi
     jg      .wend                   ; if esi > edi then exit loop
@@ -114,6 +113,7 @@ bin_search_d:
     shr     ebx, 3                  ; doubleword align
     shl     ebx, 1                  ; mul by 2
 
+    lea     eax, [esi + edx]        ; set return value = mid
     cmp     [esi + ebx], edx        ; ? array[mid] == search term ?
     jne     .skip                   ; if not equal then skip
     lea     eax, [esi + edx]        ; set return value = mid
