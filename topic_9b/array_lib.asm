@@ -45,7 +45,7 @@ bubble_sort_d:
     .innerloop:
     mov     eax, [esi]          ; get array value
     cmp     [esi + 4], eax      ; compare a pair of values
-    jge     .skip               ; if [esi] <= [edi], skip
+    jle     .skip               ; if [esi] <= [edi], skip
     xchg    eax, [esi + 4]      ; else exchange the pair
     mov     [esi], eax
 
