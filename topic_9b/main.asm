@@ -32,4 +32,4 @@ section     .bss
 section     .data
     array:      dd      1, 3, 2, 5, 4, 8, 9, 6, 0, 7
     array_sz:   equ     $ - array
-    search:     dd      6
+    search:     dd      5
