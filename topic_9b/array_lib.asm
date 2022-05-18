@@ -110,8 +110,8 @@ bin_search_d:
 
     mov     ebx, edi                ; find address of mid
     sub     ebx, esi                ; dif in bytes
-    shr     ebx, 3                  ; doubleword align
-    shl     ebx, 1                  ; mul by 2
+    shl     ebx, 3                  ; doubleword align
+    shr     ebx, 1                  ; mul by 2
 
     cmp     [esi + ebx], edx        ; ? array[mid] == search term ?
     jne     .skip                   ; if not equal then skip
