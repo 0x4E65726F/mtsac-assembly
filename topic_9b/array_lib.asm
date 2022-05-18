@@ -101,7 +101,8 @@ bin_search_d:
     mov     edx, [ebp + 16]         ; store search term in edx
 
     mov     esi, [ebp + 8]          ; set esi = first
-    mov     edi, [ebp + 12]         ; set edi = size
+    mov     edi, [ebp + 8]
+    add     edi, [ebp + 12] * 4     ; set edi = size
     lea     edi, [esi + edi - 4]    ; set edi = effective address of last
 
     .while: 
