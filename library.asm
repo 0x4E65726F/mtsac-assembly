@@ -559,7 +559,7 @@ arraySearch:
     .while:
     cmp     edx, [esi]
     je      .wend
-    inc     [ebp - 4]
+    inc     dword [ebp - 4]
     add     esi, 4
     loop    .while
 
