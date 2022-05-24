@@ -13,3 +13,10 @@ struc student_contact
 
 endstruc    
 
+name_sz:        equ         (student_contact.id - student_contact.name)
+id_sz:          equ         (student_contact.address - student_contact.id)
+address_sz:     equ         (student_contact.city - student_contact.address)
+city_sz:        equ         (student_contact.state - student_contact.city)
+state_sz:       equ         (student_contact.zip - student_contact.state)
+zip_sz:         equ         (student_contact_size - student_contact.zip)
+
