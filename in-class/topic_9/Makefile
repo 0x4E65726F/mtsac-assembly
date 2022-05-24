@@ -1,7 +1,7 @@
 
 
 main: library.o student_contact.o
-	ld -m elf_i386 library.o student_contact.o
+	ld -m elf_i386 -o main library.o student_contact.o
 
 library.o: library.asm
 	nasm -f elf -g library.asm
