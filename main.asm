@@ -13,7 +13,7 @@ extern      swap
 extern      arraySearch
 
 _start:
-    push    dword 3
+    push    dword 12
     push    array_sz
     push    array
     call    arraySearch
