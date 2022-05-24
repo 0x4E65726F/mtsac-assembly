@@ -10,6 +10,7 @@ extern      print_string
 extern      reverse_string
 extern      exit
 extern      swap
+extern      arraySearch
 
 _start:
     push    ebp                 ; preserve caller's base pointer
@@ -39,8 +40,4 @@ break:
 section     .bss
 
 section     .data
-    str:    db  "This is how to call a procedure.", 0Ah
-    str_sz: equ $ - str
-
-    val1:   dd  20
-    val2:   dd  30
+    array:      dd      
