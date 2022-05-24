@@ -13,25 +13,13 @@ extern      swap
 extern      arraySearch
 
 _start:
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for reame
-
-    push    dword str_sz        ; push arg2 the size of the string
-    push    str                 ; push arg1 the address of the string
-    call    print_string        
-
-    dec     dword [esp + 4]
-    call    reverse_string
-    inc     eax
-    mov     [esp + 4], eax
-
-    call    print_string
-    add     esp, 8
-
-    push    val1
-    push    val2
-    call    swap
-    add     esp, 8
+    push    dword 3
+    push    array_sz
+    push    array
+    call    arraySearch
+    pop     eax
+    pop     eax
+    pop     eax
 
 break:
     push    dword 0             ; push exit code
@@ -40,4 +28,5 @@ break:
 section     .bss
 
 section     .data
-    array:      dd      
+    array:      dd      1, 3, 2, 5, 4, 8, 9, 6, 7, 0
+    array_sz:   equ     $ - array
