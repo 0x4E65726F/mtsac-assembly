@@ -11,9 +11,10 @@ arraySearch:
     .while:
     cmp     edx, [esi]
     je      .wend
-    inc     [ebp - 4]
+    inc     dowrd [ebp - 4]
     add     esi, 4
     loop    .while
+    jmp     .return
 
     .wend:
     mov     eax, [ebp - 4]

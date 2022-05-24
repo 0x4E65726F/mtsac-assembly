@@ -562,7 +562,8 @@ arraySearch:
     inc     dword [ebp - 4]
     add     esi, 4
     loop    .while
-
+    jmp     .return
+    
     .wend:
     mov     eax, [ebp - 4]
 
