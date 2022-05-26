@@ -48,6 +48,8 @@ _start:
     mov     ebx, path
     mov     ecx, 777o
     int     80h
+
+    ; store dst descriptor on var2
     mov     [ebp - 8], eax
 
     .while:
