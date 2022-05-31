@@ -1,19 +1,26 @@
-extern      exit
+%include    "dma.inc"
 
 section     .text
 
 global      _start
 
 _start:
-    push    ebp
-    mov     ebp, esp
-    sub     esp, 4
+    push    ebp                                 ; set frame start
+    mov     ebp, esp                            
+    push    dword 0                             ; head = null (0)
 
-    mov     eax, 0x2d
-    xor     ebx, ebx
+    mov     eax, 0x2d                           ; syscall alloc heap space
+    xor     ebx, ebx                            ; ebx = 0 (get current program brk)
     int     0x80
-    mov     [ebp - 4], eax
 
+    mov     dword [eax + node.val], 5           ; store value in struc
+    mov     edx, [ebp - 4]                      ; edx = head
+    mov     dword [eax + node.next], edx        ; next = edx
+    mov     [ebp - 4], eax                      ; head = new node
+
+    add     esp, 4
+    pop     ebp
+    
     push    dword 0
     call    exit
 
