@@ -18,3 +18,5 @@ extern      print_nt_string
 extern      string_copy
 extern      to_lower
 extern 	    to_upper
+extern      bubble_sort_d
+extern      bin_search_d
