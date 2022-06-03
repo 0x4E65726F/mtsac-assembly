@@ -961,10 +961,10 @@ file_open:
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
     
-    mov     eax, 5
-    mov     ebx, [ebp + 8]
-    mov     ecx, 0
-    mov     edx, 777o
+    mov     eax, 5              ; call sys_open
+    mov     ebx, [ebp + 8]      ; file path
+    mov     ecx, 0              ; access mode (read only)
+    mov     edx, 777o           ; perm
     int     80h
     
     pop     ebp                 ; restore caller's base pointer
@@ -985,9 +985,9 @@ file_create:
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
     
-    mov     eax, 8
-    mov     ebx, [ebp + 8]
-    mov     ecx, 777o
+    mov     eax, 8              ; call sys_creat
+    mov     ebx, [ebp + 8]      ; file path
+    mov     ecx, 777o           ; perm
     int     80h
     
     pop     ebp                 ; restore caller's base pointer
@@ -999,7 +999,7 @@ file_create:
 file_close:  
 ;
 ; Description: Close a file
-; Receives: arg1: file path
+; Receives: arg1: file descriptor
 ; Returns:  Nothing
 ; Requires: Nothing
 ; Note:     Nothing
@@ -1008,9 +1008,9 @@ file_close:
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
     
-    mov     eax, 6
-    mov     ebx, [ebp + 8]
-    int     80h
+    mov     eax, 6              ; call sys_close
+    mov     ebx, [ebp + 8]      ; file descriptor
+    int     80h             
     
     pop     ebp                 ; restore caller's base pointer
     ret
@@ -1024,7 +1024,7 @@ file_read:
 ; Receives: arg1: file descriptor
 ;           arg2: buffer address
 ;           arg3: buffer size
-; Returns:  EAX = data that we have got
+; Returns:  EAX = quantity of bytes read
 ; Requires: Nothing
 ; Note:     Nothing
 ;----------------------------------------------------------------------------------------
@@ -1032,10 +1032,10 @@ file_read:
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
     
-    mov     eax, 3
-    mov     ebx, [ebp + 8]
-    mov     ecx, [ebp + 12]
-    mov     edx, [ebp + 16]
+    mov     eax, 3              ; call sys_read
+    mov     ebx, [ebp + 8]      ; file descriptor
+    mov     ecx, [ebp + 12]     ; buffer
+    mov     edx, [ebp + 16]     ; buffer size
     int     80h
     
     pop     ebp                 ; restore caller's base pointer
@@ -1049,7 +1049,7 @@ file_write:
 ; Description: Write data into file
 ; Receives: arg1: file descriptor
 ;           arg2: buffer address
-;           arg3: data that we want to add
+;           arg3: byte size
 ; Returns:  Nothing
 ; Requires: Nothing
 ; Note:     Nothing
@@ -1058,10 +1058,10 @@ file_write:
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
     
-    mov     eax, 4
-    mov     ebx, [ebp + 8]
-    mov     ecx, [ebp + 12]
-    mov     edx, [ebp + 16]
+    mov     eax, 4              ; call sys_write
+    mov     ebx, [ebp + 8]      ; file descriptor
+    mov     ecx, [ebp + 12]     ; buffer
+    mov     edx, [ebp + 16]     ; byte size
     int     80h
     
     pop     ebp                 ; restore caller's base pointer
