@@ -62,9 +62,10 @@ _start:
     ; mov     ecx, buffer
     ; mov     edx, buf_sz
     ; int     80h
-    push    dword [ebp - 4]
-    push    buffer
+
     push    buf_sz
+    push    buffer
+    push    dword [ebp - 4]
     call    file_read
     add     esp, 12
 
@@ -76,9 +77,9 @@ _start:
     ; mov     ebx, [ebp - 8]
     ; mov     ecx, buffer
     ; int     80h
-    push    dword [ebp - 8]
-    push    buffer
     push    eax
+    push    buffer
+    push    dword [ebp - 8]
     call    file_write
     add     esp, 12
 
