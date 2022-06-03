@@ -62,7 +62,7 @@ _start:
     ; mov     ecx, buffer
     ; mov     edx, buf_sz
     ; int     80h
-    push    [ebp - 4]
+    push    dword [ebp - 4]
     push    buffer
     push    buf_sz
     call    file_read
@@ -76,7 +76,7 @@ _start:
     ; mov     ebx, [ebp - 8]
     ; mov     ecx, buffer
     ; int     80h
-    push    [ebp - 8]
+    push    dword [ebp - 8]
     push    buffer
     push    eax
     call    file_write
@@ -89,14 +89,14 @@ _start:
     ; mov     eax, 6
     ; mov     ebx, [ebp - 4]
     ; int     80h
-    push    [ebp - 4]
+    push    dword [ebp - 4]
     call    file_close
     add     esp, 4
 
     ; mov     eax, 6
     ; mov     ebx, [ebp - 8]
     ; int     80h
-    push    [ebp - 8]
+    push    dword [ebp - 8]
     call    file_close
     add     esp, 4
 
