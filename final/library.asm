@@ -960,12 +960,20 @@ file_open:
 
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
+
+    push    ebx                 ; preserve
+    push    ecx                 ; preserve
+    push    edx                 ; preserve
     
     mov     eax, 5              ; call sys_open
     mov     ebx, [ebp + 8]      ; file path
     mov     ecx, 0              ; access mode (read only)
     mov     edx, 777o           ; perm
     int     80h
+
+    pop     edx                 ; restore
+    pop     ecx                 ; restore
+    pop     ebx                 ; restore
     
     pop     ebp                 ; restore caller's base pointer
     ret
@@ -984,11 +992,17 @@ file_create:
 
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
+
+    push    ebx                 ; preserve
+    push    ecx                 ; preserve
     
     mov     eax, 8              ; call sys_creat
     mov     ebx, [ebp + 8]      ; file path
     mov     ecx, 777o           ; perm
     int     80h
+
+    pop     ecx                 ; restore
+    pop     ebx                 ; restore
     
     pop     ebp                 ; restore caller's base pointer
     ret
@@ -1007,10 +1021,14 @@ file_close:
 
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
+
+    push    ebx                 ; preserve
     
     mov     eax, 6              ; call sys_close
     mov     ebx, [ebp + 8]      ; file descriptor
     int     80h             
+
+    pop     ebx                 ; restore
     
     pop     ebp                 ; restore caller's base pointer
     ret
@@ -1032,11 +1050,19 @@ file_read:
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
     
+    push    ebx                 ; preserve
+    push    ecx                 ; preserve
+    push    edx                 ; preserve
+
     mov     eax, 3              ; call sys_read
     mov     ebx, [ebp + 8]      ; file descriptor
     mov     ecx, [ebp + 12]     ; buffer
     mov     edx, [ebp + 16]     ; buffer size
     int     80h
+
+    pop     edx                 ; restore
+    pop     ecx                 ; restore
+    pop     ebx                 ; restore
     
     pop     ebp                 ; restore caller's base pointer
     ret
@@ -1057,6 +1083,10 @@ file_write:
 
     push    ebp                 ; preserve caller's base pointer
     mov     ebp, esp            ; start frame
+
+    push    ebx                 ; preserve
+    push    ecx                 ; preserve
+    push    edx                 ; preserve
     
     mov     eax, 4              ; call sys_write
     mov     ebx, [ebp + 8]      ; file descriptor
@@ -1064,6 +1094,10 @@ file_write:
     mov     edx, [ebp + 16]     ; byte size
     int     80h
     
+    pop     edx                 ; restore
+    pop     ecx                 ; restore
+    pop     ebx                 ; restore
+
     pop     ebp                 ; restore caller's base pointer
     ret
 
