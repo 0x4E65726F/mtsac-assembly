@@ -16,6 +16,7 @@ section     .data
 
 section     .text
 
+; basic
 global      print_string
 global      endl
 global      get_input
@@ -23,204 +24,40 @@ global      exit
 global 	    reverse_string
 global      atoi
 global      itoa
+
+; random number process
 global      current_time
 global      srand
 global      rand
+
+; check input is legal or not
 global      legal_string_input
+
+; power function
 global      pow
+
+; two different type of swap
 global      swap
 global      swap2
-global      get_nt_input
-global      atoi_nt
+
+; null-terminated string process
 global      print_nt_string
 global      string_copy
+global      atoi_nt
+global      get_nt_input
 global      to_lower
 global 	    to_upper
+
+; dword sort
 global      bubble_sort_d
 global      bin_search_d
 
-;----------------------------------------------------------------------------------------
-get_size:
-; 
-; This displays the size of a string that has been null-terminated.
-; Receives: arg1 = the address of a null-terminated string
-; Returns: 	EAX = the size of the string (not including the null terminator)
-; Requires:	Nothing
-; Note:     Nothing
-;----------------------------------------------------------------------------------------
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for frame
-    push    edi                 ; preserve esi
-    push    ecx                 ; preserve ecx
-
-    cld                         ; direction = forward
-    mov     edi, [ebp + 8]      ; move arg1 into esi (address of the string)
-    mov     ecx, -1             ; size start at -1 to make sure repeat won't end at first
-    mov     al, 0               ; check if edi is at the null terminator
-    repne   scasb               ; repeat while the null terminator has not been found
-    neg     ecx                 ; change ecx from negative to positive
-    dec     ecx                 ; decrease -1 that we add at beginning
-    mov     eax, ecx            ; move size number into eax
-
-    pop     ecx                 ; restore ecx
-    pop     edi                 ; restore esi
-    pop     ebp                 ; restore caller's base pointer
-    ret
-; End get_size ---------------------------------------------------------------------------
-
-;----------------------------------------------------------------------------------------
-print_nt_string:
-; 
-; This displays a string that has been null-terminated.
-; Receives: arg1 = the address of a null-terminated string
-; Returns: 	Nothing
-; Requires:	Nothing
-; Note:     Nothing
-;----------------------------------------------------------------------------------------
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for frame
-    push    eax                 ; preserve eax
-    push    ebx                 ; preserve ebx
-    push    ecx                 ; preserve ecx
-    push    edx                 ; preserve edx
-
-    mov     ecx, [ebp + 8]      ; move arg1 into ecx (address of the string)
-    push    ecx                 ; push ecx into stack for procedure call
-    call    get_size             ; get size of the string
-    pop     ecx                 ; get ecx back
-    mov     edx, eax            ; move size of the string into edx
-    mov     eax, 4              ; set stream as stdout
-    mov     ebx, 1              ; set write code
-    int     80h                 ; syscall    
-
-    pop     edx                 ; restore edx
-    pop     ecx                 ; restore ecx
-    pop     ebx                 ; restore ebx
-    pop     eax                 ; restore eax
-    pop     ebp                 ; restore caller's base pointer
-    ret
-; End print_string ----------------------------------------------------------------------
-
-;----------------------------------------------------------------------------------------
-string_copy:
-; 
-; Copy a null terminated string from one array into another.
-; Receives: arg1 = the address of the source string
-;           arg2 = the address of the destination string
-; Returns: 	Nothing
-; Requires:	Nothing
-; Note:     Nothing
-;----------------------------------------------------------------------------------------
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for frame
-    push    esi                 ; preserve esi
-    push    edi                 ; preserve edi
-    push    eax                 ; preserve eax
-    push    ecx                 ; preserve ecx
-    
-    cld                         ; direction = forward
-    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the source string)
-    mov     edi, [ebp + 12]     ; move arg2 into esi (address of the destination string)
-    push    esi                 ; push esi into stack for procedure call
-    call    get_size             ; get size of the string
-    pop     esi                 ; get esi back
-    mov     ecx, eax            ; move size of the string into ecx
-    inc     ecx                 ; include the null terminator
-    rep     movsb               ; copy all characters from source to target
-
-    pop     ecx                 ; restore ecx
-    pop     eax                 ; restore eax
-    pop     edi                 ; restore edi
-    pop     esi                 ; restore esi
-    pop     ebp                 ; restore caller's base pointer
-    ret
-; End string_copy -----------------------------------------------------------------------
-
-;----------------------------------------------------------------------------------------
-to_lower:
-; 
-; Scan the string for uppercase alphabet characters and convert them to lowercase.
-; Receives: arg1 = the address of a null-terminated string
-; Returns: 	Nothing
-; Requires:	Nothing
-; Note:     Nothing
-;----------------------------------------------------------------------------------------
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for frame
-    push    esi                 ; preserve esi
-    push    edi                 ; preserve edi
-    push    eax                 ; preserve eax
-    push    ecx                 ; preserve ecx
-
-    cld                         ; direction = forward
-    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
-    mov     edi, esi            ; also move arg1 into edi
-    push    esi                 ; push esi into stack for procedure call
-    call    get_size             ; get size of the string
-    pop     esi                 ; get esi back
-    mov     ecx, eax            ; move size of the string into ecx
-
-    .loop:
-    lodsb                       ; copy [esi] into al
-    cmp     al, 'A'             ; see if al is smaller than 'A'
-    jb      .no_change
-    cmp     al, 'Z'             ; see if al is bigger than 'Z'
-    ja      .no_change
-    add     al, 'a' - 'A'       ; change al from upper case to lower case
-    .no_change:
-    stosb                       ; store al at [edi]
-    loop    .loop
-    
-    pop     ecx                 ; restore ecx
-    pop     eax                 ; restore eax
-    pop     edi                 ; restore edi
-    pop     esi                 ; restore esi
-    pop     ebp                 ; restore caller's base pointer
-    ret
-; End to_lower --------------------------------------------------------------------------
-
-;----------------------------------------------------------------------------------------
-to_upper:
-; 
-; Set the random number seed
-; Receives: arg1 = the address of a null-terminated string
-; Returns: 	Nothing
-; Requires:	Nothing
-; Note:     Nothing
-;----------------------------------------------------------------------------------------
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for frame
-    push    esi                 ; preserve esi
-    push    edi                 ; preserve edi
-    push    eax                 ; preserve eax
-    push    ecx                 ; preserve ecx
-    
-    cld                         ; direction = forward
-    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
-    mov     edi, esi            ; also move arg1 into edi
-    push    esi                 ; push esi into stack for procedure call
-    call    get_size             ; get size of the string
-    pop     esi                 ; get esi back
-    mov     ecx, eax            ; move size of the string into ecx
-
-    .loop:
-    lodsb                       ; copy [esi] into al
-    cmp     al, 'a'             ; see if al is smaller than 'a'
-    jb      .no_change
-    cmp     al, 'z'             ; see if al is bigger than 'z'
-    ja      .no_change
-    add     al, 'A' - 'a'       ; change al from lower case to upper case
-    .no_change:
-    stosb                       ; store al at [edi]
-    loop    .loop
-
-    pop     ecx                 ; restore ecx
-    pop     eax                 ; restore eax
-    pop     edi                 ; restore edi
-    pop     esi                 ; restore esi
-    pop     ebp                 ; restore caller's base pointer
-    ret
-; End to_upper --------------------------------------------------------------------------
+; file process
+global      file_open
+global      file_create
+global      file_close
+global      file_read
+global      file_write
 
 ;----------------------------------------------------------------------------------------
 print_string:
@@ -297,34 +134,6 @@ get_input:
 ; End get_input -------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
-get_nt_input:
-;
-; Get null terminated string from the console
-; Receives: arg1: address of the input array
-;           arg2: size of the array
-; Returns:  EAX (number of characters)
-; Requires: Nothing
-;----------------------------------------------------------------------------------------
-    push    ebp                         ; preserve caller's base pointer
-    mov     ebp, esp                    ; set base pointer for frame
-    
-    push    ebx                         ; preserve
-
-    push    dword [ebp + 12]            ; set arg2
-    push    dword [ebp + 8]             ; set arg1
-    call    get_input                   ; call get_input
-    add     esp, 8                      ; deallocate get_input args
-
-    mov     ebx, [ebp + 8]              ; set ebx = address of input array
-    mov     byte [ebx + eax - 1], 0     ; write terminator to address + size - 1
-
-    pop     ebx                         ; restore
-    pop     ebp                         ; restore caller's base pointer
-    
-    ret                                 ; return procedure
-; End get_nt_input ----------------------------------------------------------------------
-
-;----------------------------------------------------------------------------------------
 exit:  
 ;
 ; Exits the program gracefully
@@ -359,14 +168,14 @@ reverse_string:
 	mov 	ecx, [ebp + 12]     ; set ecx as counter
 	mov 	edi, esi            ; store address in edi for write loop
 	
-read:
+    .read:
 	.loop:
 	movzx 	dx, byte [esi]      ; mov char into dx
 	push 	dx                  ; push char on stack
 	inc 	esi                 ; increment pointer
 	loop 	.loop
 	
-write:
+    .write:
 	mov 	ecx, [ebp + 12]     ; reset counter
 	.loop:
 	pop 	dx                  ; pop char from stack
@@ -417,38 +226,6 @@ atoi:
     pop     ebp                 ; restore caller's base pointer
     ret
 ; End atoi ------------------------------------------------------------------------------
-
-;----------------------------------------------------------------------------------------
-atoi_nt:
-; 
-; Convert a string representation of an unsigned integer to an integer
-; Receives: arg1: the address of the string
-; 			arg2: the size of the string
-; Returns: 	EAX: the unsigned integer value
-; Requires:	Nothing
-; Note:     Horner's polynomial method
-;           tmp = 0
-;           for each char (left to right)
-;               tmp = 10 * tmp + (char_val - 48) (converts vhar to digit)
-;----------------------------------------------------------------------------------------
-    push    ebp                 ; preserve caller's base pointer
-    mov     ebp, esp            ; set base pointer for frame
-
-    push    ebx                 ; preserve
-
-    push    dword [ebp + 8]     ; push address of array
-    call    get_size
-    add     esp, 4
-
-    push    eax
-    push    dword [ebp + 8]
-    call    atoi
-    add     esp, 8
-
-    pop     ebx                 ; restore
-    pop     ebp                 ; restore caller's base pointer
-    ret
-; End atoi_nt ---------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
 itoa:
@@ -793,6 +570,250 @@ swap2:
     
 ; End swap2 -----------------------------------------------------------------------------
 
+; null-terminated string process
+;----------------------------------------------------------------------------------------
+get_size:
+; 
+; This displays the size of a string that has been null-terminated.
+; Receives: arg1 = the address of a null-terminated string
+; Returns: 	EAX = the size of the string (not including the null terminator)
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    push    edi                 ; preserve esi
+    push    ecx                 ; preserve ecx
+
+    cld                         ; direction = forward
+    mov     edi, [ebp + 8]      ; move arg1 into esi (address of the string)
+    mov     ecx, -1             ; size start at -1 to make sure repeat won't end at first
+    mov     al, 0               ; check if edi is at the null terminator
+    repne   scasb               ; repeat while the null terminator has not been found
+    neg     ecx                 ; change ecx from negative to positive
+    dec     ecx                 ; decrease -1 that we add at beginning
+    mov     eax, ecx            ; move size number into eax
+
+    pop     ecx                 ; restore ecx
+    pop     edi                 ; restore esi
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End get_size ---------------------------------------------------------------------------00000000000000000000000000000000
+
+;----------------------------------------------------------------------------------------
+print_nt_string:
+; 
+; This displays a string that has been null-terminated.
+; Receives: arg1 = the address of a null-terminated string
+; Returns: 	Nothing
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    push    eax                 ; preserve eax
+    push    ebx                 ; preserve ebx
+    push    ecx                 ; preserve ecx
+    push    edx                 ; preserve edx
+
+    mov     ecx, [ebp + 8]      ; move arg1 into ecx (address of the string)
+    push    ecx                 ; push ecx into stack for procedure call
+    call    get_size             ; get size of the string
+    pop     ecx                 ; get ecx back
+    mov     edx, eax            ; move size of the string into edx
+    mov     eax, 4              ; set stream as stdout
+    mov     ebx, 1              ; set write code
+    int     80h                 ; syscall    
+
+    pop     edx                 ; restore edx
+    pop     ecx                 ; restore ecx
+    pop     ebx                 ; restore ebx
+    pop     eax                 ; restore eax
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End print_string ----------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+string_copy:
+; 
+; Copy a null terminated string from one array into another.
+; Receives: arg1 = the address of the source string
+;           arg2 = the address of the destination string
+; Returns: 	Nothing
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    push    esi                 ; preserve esi
+    push    edi                 ; preserve edi
+    push    eax                 ; preserve eax
+    push    ecx                 ; preserve ecx
+    
+    cld                         ; direction = forward
+    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the source string)
+    mov     edi, [ebp + 12]     ; move arg2 into esi (address of the destination string)
+    push    esi                 ; push esi into stack for procedure call
+    call    get_size             ; get size of the string
+    pop     esi                 ; get esi back
+    mov     ecx, eax            ; move size of the string into ecx
+    inc     ecx                 ; include the null terminator
+    rep     movsb               ; copy all characters from source to target
+
+    pop     ecx                 ; restore ecx
+    pop     eax                 ; restore eax
+    pop     edi                 ; restore edi
+    pop     esi                 ; restore esi
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End string_copy -----------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+atoi_nt:
+; 
+; Convert a string representation of an unsigned integer to an integer
+; Receives: arg1: the address of the string
+; 			arg2: the size of the string
+; Returns: 	EAX: the unsigned integer value
+; Requires:	Nothing
+; Note:     Horner's polynomial method
+;           tmp = 0
+;           for each char (left to right)
+;               tmp = 10 * tmp + (char_val - 48) (converts vhar to digit)
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+
+    push    ebx                 ; preserve
+
+    push    dword [ebp + 8]     ; push address of array
+    call    get_size
+    add     esp, 4
+
+    push    eax
+    push    dword [ebp + 8]
+    call    atoi
+    add     esp, 8
+
+    pop     ebx                 ; restore
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End atoi_nt ---------------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+get_nt_input:
+;
+; Get null terminated string from the console
+; Receives: arg1: address of the input array
+;           arg2: size of the array
+; Returns:  EAX (number of characters)
+; Requires: Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                         ; preserve caller's base pointer
+    mov     ebp, esp                    ; set base pointer for frame
+    
+    push    ebx                         ; preserve
+
+    push    dword [ebp + 12]            ; set arg2
+    push    dword [ebp + 8]             ; set arg1
+    call    get_input                   ; call get_input
+    add     esp, 8                      ; deallocate get_input args
+
+    mov     ebx, [ebp + 8]              ; set ebx = address of input array
+    mov     byte [ebx + eax - 1], 0     ; write terminator to address + size - 1
+
+    pop     ebx                         ; restore
+    pop     ebp                         ; restore caller's base pointer
+    
+    ret                                 ; return procedure
+; End get_nt_input ----------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+to_lower:
+; 
+; Scan the string for uppercase alphabet characters and convert them to lowercase.
+; Receives: arg1 = the address of a null-terminated string
+; Returns: 	Nothing
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    push    esi                 ; preserve esi
+    push    edi                 ; preserve edi
+    push    eax                 ; preserve eax
+    push    ecx                 ; preserve ecx
+
+    cld                         ; direction = forward
+    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
+    mov     edi, esi            ; also move arg1 into edi
+    push    esi                 ; push esi into stack for procedure call
+    call    get_size             ; get size of the string
+    pop     esi                 ; get esi back
+    mov     ecx, eax            ; move size of the string into ecx
+
+    .loop:
+    lodsb                       ; copy [esi] into al
+    cmp     al, 'A'             ; see if al is smaller than 'A'
+    jb      .no_change
+    cmp     al, 'Z'             ; see if al is bigger than 'Z'
+    ja      .no_change
+    add     al, 'a' - 'A'       ; change al from upper case to lower case
+    .no_change:
+    stosb                       ; store al at [edi]
+    loop    .loop
+    
+    pop     ecx                 ; restore ecx
+    pop     eax                 ; restore eax
+    pop     edi                 ; restore edi
+    pop     esi                 ; restore esi
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End to_lower --------------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+to_upper:
+; 
+; Set the random number seed
+; Receives: arg1 = the address of a null-terminated string
+; Returns: 	Nothing
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    push    esi                 ; preserve esi
+    push    edi                 ; preserve edi
+    push    eax                 ; preserve eax
+    push    ecx                 ; preserve ecx
+    
+    cld                         ; direction = forward
+    mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
+    mov     edi, esi            ; also move arg1 into edi
+    push    esi                 ; push esi into stack for procedure call
+    call    get_size             ; get size of the string
+    pop     esi                 ; get esi back
+    mov     ecx, eax            ; move size of the string into ecx
+
+    .loop:
+    lodsb                       ; copy [esi] into al
+    cmp     al, 'a'             ; see if al is smaller than 'a'
+    jb      .no_change
+    cmp     al, 'z'             ; see if al is bigger than 'z'
+    ja      .no_change
+    add     al, 'A' - 'a'       ; change al from lower case to upper case
+    .no_change:
+    stosb                       ; store al at [edi]
+    loop    .loop
+
+    pop     ecx                 ; restore ecx
+    pop     eax                 ; restore eax
+    pop     edi                 ; restore edi
+    pop     esi                 ; restore esi
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End to_upper --------------------------------------------------------------------------
+
 ;----------------------------------------------------------------------------------------
 bubble_sort_d:  
 ;
@@ -927,3 +948,123 @@ bin_search_d:
 
 ; End bin_search_d ---------------------------------------------------------------------
 
+;----------------------------------------------------------------------------------------
+file_open:  
+;
+; Description: Open a file for read
+; Receives: arg1: file path
+; Returns:  EAX = descriptor
+; Requires: Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; start frame
+    
+    mov     eax, 5
+    mov     ebx, [ebp + 8]
+    mov     ecx, 0
+    mov     edx, 777o
+    int     80h
+    
+    pop     ebp                 ; restore caller's base pointer
+    ret
+
+; End file_open_read --------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+file_create:  
+;
+; Description: Create a file for write
+; Receives: arg1: file path
+; Returns:  EAX = descriptor
+; Requires: Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; start frame
+    
+    mov     eax, 8
+    mov     ebx, [ebp + 8]
+    mov     ecx, 777o
+    int     80h
+    
+    pop     ebp                 ; restore caller's base pointer
+    ret
+
+; End file_open_write -------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+file_close:  
+;
+; Description: Close a file
+; Receives: arg1: file path
+; Returns:  Nothing
+; Requires: Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; start frame
+    
+    mov     eax, 6
+    mov     ebx, [ebp + 8]
+    int     80h
+    
+    pop     ebp                 ; restore caller's base pointer
+    ret
+
+; End file_close ------------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+file_read:  
+;
+; Description: Read a file
+; Receives: arg1: file descriptor
+;           arg2: buffer address
+;           arg3: buffer size
+; Returns:  EAX = data that we have got
+; Requires: Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; start frame
+    
+    mov     eax, 3
+    mov     ebx, [ebp + 8]
+    mov     ecx, [ebp + 12]
+    mov     edx, [ebp + 16]
+    int     80h
+    
+    pop     ebp                 ; restore caller's base pointer
+    ret
+
+; End file_read -------------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+file_write:  
+;
+; Description: Write data into file
+; Receives: arg1: file descriptor
+;           arg2: buffer address
+;           arg3: data that we want to add
+; Returns:  Nothing
+; Requires: Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; start frame
+    
+    mov     eax, 4
+    mov     ebx, [ebp + 8]
+    mov     ecx, [ebp + 12]
+    mov     edx, [ebp + 16]
+    int     80h
+    
+    pop     ebp                 ; restore caller's base pointer
+    ret
+
+; End file_write ------------------------------------------------------------------------

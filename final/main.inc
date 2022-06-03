@@ -20,3 +20,8 @@ extern      to_lower
 extern 	    to_upper
 extern      bubble_sort_d
 extern      bin_search_d
+extern      file_open
+extern      file_create
+extern      file_close
+extern      file_read
+extern      file_write
