@@ -169,19 +169,19 @@ reverse_string:
 	mov 	edi, esi            ; store address in edi for write loop
 	
     .read:
-	.loop:
+	.loop1:
 	movzx 	dx, byte [esi]      ; mov char into dx
 	push 	dx                  ; push char on stack
 	inc 	esi                 ; increment pointer
-	loop 	.loop
+	loop 	.loop1
 	
     .write:
 	mov 	ecx, [ebp + 12]     ; reset counter
-	.loop:
+	.loop2:
 	pop 	dx                  ; pop char from stack
 	mov 	[edi], dl           ; store it in string
 	inc 	edi                 ; increment pointer
-	loop 	.loop
+	loop 	.loop2
 	
 	pop 	edi                 ; restore
 	pop 	esi                 ; restore
