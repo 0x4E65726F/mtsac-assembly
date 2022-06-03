@@ -5,113 +5,46 @@ section     .text
 global      _start
 
 _start:
-    push    ebp
-    mov     ebp, esp
-    sub     esp, 8
+    push    array_sz
+    push    array
+    call    bubble_sort_d
 
-    ; prompt for source path
-    push    src_prompt
-    call    print_nt_string
-    add     esp, 4
+    pop     eax
+    pop     eax
+    push    dword [search_3]
+    push    array_sz
+    push    array
+    call    bin_search_d
+    mov     ebx, [eax]
 
-    ; get file path
-    push    dword path_sz
-    push    path
-    call    get_nt_input
-    add     esp, 8
+    pop     eax
+    pop     eax
+    pop     eax
+    push    dword [search_5]
+    push    array_sz
+    push    array
+    call    bin_search_d
+    mov     ebx, [eax]
 
-    ; open src file
-    ; mov     eax, 5
-    ; mov     ebx, path
-    ; mov     ecx, 0
-    ; mov     edx, 777o
-    ; int     80h
-    push    path
-    call    file_open
-    add     esp, 4
+    pop     eax
+    pop     eax
+    pop     eax
+    push    dword [search_7]
+    push    array_sz
+    push    array
+    call    bin_search_d
+    mov     ebx, [eax]
 
-    ; store src descriptor on var1
-    mov     [ebp - 4], eax
+exit:  
+    mov     ebx, 0      ; return 0 status on exit - 'No Errors'
+    mov     eax, 1      ; invoke SYS_EXIT (kernel opcode 1)
+    int     80h
 
-    ; prompt for destination path
-    push    dst_prompt
-    call    print_nt_string
-    add     esp, 4
-
-    ; get file path
-    push    dword path_sz
-    push    path
-    call    get_nt_input
-    add     esp, 8
-
-    ; create dst file
-    ; mov     eax, 8
-    ; mov     ebx, path
-    ; mov     ecx, 777o
-    ; int     80h
-    push    path
-    call    file_create
-    add     esp, 4
-
-    ; store dst descriptor on var2
-    mov     [ebp - 8], eax
-
-    .while:
-    ; mov     eax, 3
-    ; mov     ebx, [ebp - 4]
-    ; mov     ecx, buffer
-    ; mov     edx, buf_sz
-    ; int     80h
-
-    push    buf_sz
-    push    buffer
-    push    dword [ebp - 4]
-    call    file_read
-    add     esp, 12
-
-    cmp     eax, 0
-    je      .wend
-
-    ; mov     edx, eax
-    ; mov     eax, 4
-    ; mov     ebx, [ebp - 8]
-    ; mov     ecx, buffer
-    ; int     80h
-    push    eax
-    push    buffer
-    push    dword [ebp - 8]
-    call    file_write
-    add     esp, 12
-
-    jmp     .while
-
-    .wend:
-    ; close files
-    ; mov     eax, 6
-    ; mov     ebx, [ebp - 4]
-    ; int     80h
-    push    dword [ebp - 4]
-    call    file_close
-    add     esp, 4
-
-    ; mov     eax, 6
-    ; mov     ebx, [ebp - 8]
-    ; int     80h
-    push    dword [ebp - 8]
-    call    file_close
-    add     esp, 4
-
-    add     esp, 8
-    pop     ebp
-    push    dword 0
-    call    exit
-
-section     .bss
-    buffer:         resb    8196
-    buf_sz:         equ     $ - buffer
-    path:           resb    50
-    path_sz:        equ     $ - path
+section     .bss     
 
 section     .data
-    src_prompt:     db      "Enter the path of the source file: ", 0
-    dst_prompt:     db      "Enter the path of the destination file: ", 0
+    array:      dd      1, 3, 2, 5, 4, 8, 9, 6, 7, 0
+    array_sz:   equ     $ - array
+    search_3:   dd      3
+    search_5:   dd      5
+    search_7:   dd      7
