@@ -18,6 +18,7 @@ _start:
     push    buffer
     call    print_string
     add     esp, 8
+    call    endl
     
     call    current_time
     call    srand
@@ -32,6 +33,7 @@ _start:
     push    buffer
     call    print_string
     add     esp, 8
+    call    endl
 
     push    array_sz
     push    array
@@ -55,6 +57,7 @@ _start:
     push    buffer
     call    print_string
     add     esp, 8
+    call    endl
 
     pop     eax
     pop     eax
@@ -95,6 +98,7 @@ _start:
     push    buffer
     call    print_string
     add     esp, 8
+    call    endl
 
     push    dword 0
     call    exit
