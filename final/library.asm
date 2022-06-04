@@ -744,7 +744,7 @@ itoa_nt:
     call    reverse_string
     add     esp, 8
     inc     esi
-    mov     [esi], 0
+    mov     [esi], byte 0
 
     mov     eax, [ebp - 4]      ; ebx should still hold counter
     add     esp, 4              ; deallocate temp var
