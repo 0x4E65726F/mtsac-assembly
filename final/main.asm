@@ -90,13 +90,12 @@ _start:
     push    buffer_sz
     push    buffer
     push    ebx
-    call    itoa
+    call    itoa_nt
     add     esp, 12
 
-    push    eax
     push    buffer
-    call    print_string
-    add     esp, 8
+    call    print_nt_string
+    add     esp, 4
     call    endl
 
     push    dword 0

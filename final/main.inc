@@ -14,6 +14,7 @@ extern      swap
 extern      swap2
 extern      get_nt_input
 extern      atoi_nt
+extern      itoa_nt
 extern      print_nt_string
 extern      string_copy
 extern      to_lower

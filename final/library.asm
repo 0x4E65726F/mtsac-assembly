@@ -44,6 +44,7 @@ global      swap2
 global      print_nt_string
 global      string_copy
 global      atoi_nt
+global      itoa_nt
 global      get_nt_input
 global      to_lower
 global 	    to_upper
@@ -481,12 +482,12 @@ pow:
     mov     ebx, [ebp + 8]      ; get base (ebx)
     mov     edi, [ebp + 12]     ; get exp  (edi)
 
-.state_1:
+    .state_1:
     shl     di, 1               ; shift left to inspect msb
     jc      .state_2            ; if msb == 1 transition to state 2
     loop    .state_1            ; get next msb
 
-.state_2:
+    .state_2:
     pushfd                      ; preserve CF
     mul     eax                 ; square prod
     popfd                       ;
@@ -673,7 +674,6 @@ atoi_nt:
 ; 
 ; Convert a string representation of an unsigned integer to an integer
 ; Receives: arg1: the address of the string
-; 			arg2: the size of the string
 ; Returns: 	EAX: the unsigned integer value
 ; Requires:	Nothing
 ; Note:     Horner's polynomial method
@@ -699,6 +699,63 @@ atoi_nt:
     pop     ebp                 ; restore caller's base pointer
     ret
 ; End atoi_nt ---------------------------------------------------------------------------
+
+;----------------------------------------------------------------------------------------
+itoa_nt:
+; 
+; Convert an unsigned integer to a string representation
+; Receives: arg1: the integer to be converted
+; 			arg2: the address of the string
+;           arg3: the size of the string
+; Returns: 	EAX = the number of chars added to the string
+; Requires:	Nothing
+; Note:     Nothing
+;----------------------------------------------------------------------------------------
+    push    ebp                 ; preserve caller's base pointer
+    mov     ebp, esp            ; set base pointer for frame
+    sub     esp, 4              ; allocate temp var
+    mov     [ebp - 4], dword 0  ; init temp to 0
+    
+    push    ebx                 ; preserve
+    push    ecx                 ; preserve
+    push    esi                 ; preserve
+    push    edi                 ; preserve
+    mov     eax, [ebp + 8]      ; move arg1 into eax for conversion
+
+    mov     esi, [ebp + 12]     ; set esi as pointer
+    mov     edi, [ebp + 12]     ; set edi as pointer
+    mov     ecx, [ebp + 16]     ; move arg3 (array size) into ecx
+    mov     ebx, 10             ; ebx i divisor
+
+    .loop:
+    xor     edx, edx            ; set edx to 0 for division
+    idiv    ebx                 ; divide number
+    add     edx, 48             ; get character from remainder
+    mov     [esi], edx          ; store the character
+    inc     dword [ebp - 4]     ; increment counter
+    cmp     eax, 0              ; eax <=> 0 ?
+    je      .break              ; if eax == 0 then break from loop
+    inc     esi                 ; increment pointer
+    loop    .loop
+
+    .break:
+    push    dword [ebp - 4]     ; agr2 for rev_str call
+    push    edi                 ; arg1 for rev_str call
+    call    reverse_string
+    add     esp, 8
+    inc     esi
+    mov     [esi], 0
+
+    mov     eax, [ebp - 4]      ; ebx should still hold counter
+    add     esp, 4              ; deallocate temp var
+    pop     edi                 ; restore
+    pop     esi                 ; restore
+    pop     ecx                 ; restore
+    pop     ebx                 ; restore
+
+    pop     ebp                 ; restore caller's base pointer
+    ret
+; End itoa_nt ------------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
 get_nt_input:
