@@ -78,6 +78,7 @@ _start:
     push    buffer
     call    print_string
     add     esp, 8
+    call    endl
 
     pop     eax
     pop     eax
@@ -104,7 +105,7 @@ _start:
     call    exit
 
 section     .bss     
-    buffer:     resb    1024
+    buffer:     resb    512
     buffer_sz:  equ     $ - buffer
 
 section     .data
