@@ -251,7 +251,7 @@ itoa:
 
     mov     esi, [ebp + 12]     ; set esi as pointer
     mov     edi, [ebp + 12]     ; set edi as pointer
-    mov     eax, [ebp + 16]     ; move arg3 (array size) into ecx
+    mov     ecx, [ebp + 16]     ; move arg3 (array size) into ecx
     mov     ebx, 10             ; ebx i divisor
 
     .loop:
