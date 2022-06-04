@@ -98,6 +98,17 @@ _start:
     add     esp, 4
     call    endl
 
+    push    buffer_sz
+    push    buffer
+    push    dword 12345
+    call    itoa_nt
+    add     esp, 12
+
+    push    buffer
+    call    print_nt_string
+    add     esp, 4
+    call    endl
+
     push    dword 0
     call    exit
 
