@@ -13,6 +13,7 @@ extern      pow
 extern      swap
 extern      swap2
 extern      get_nt_input
+extern      str_len
 extern      atoi_nt
 extern      itoa_nt
 extern      print_nt_string

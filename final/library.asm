@@ -43,6 +43,7 @@ global      swap2
 ; null-terminated string process
 global      print_nt_string
 global      string_copy
+global      str_len
 global      atoi_nt
 global      itoa_nt
 global      get_nt_input
@@ -573,7 +574,7 @@ swap2:
 
 ; null-terminated string process
 ;----------------------------------------------------------------------------------------
-get_size:
+str_len:
 ; 
 ; This displays the size of a string that has been null-terminated.
 ; Receives: arg1 = the address of a null-terminated string
@@ -599,7 +600,7 @@ get_size:
     pop     edi                 ; restore esi
     pop     ebp                 ; restore caller's base pointer
     ret
-; End get_size ---------------------------------------------------------------------------00000000000000000000000000000000
+; End str_len ---------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------------------
 print_nt_string:
@@ -619,7 +620,7 @@ print_nt_string:
 
     mov     ecx, [ebp + 8]      ; move arg1 into ecx (address of the string)
     push    ecx                 ; push ecx into stack for procedure call
-    call    get_size             ; get size of the string
+    call    str_len             ; get size of the string
     pop     ecx                 ; get ecx back
     mov     edx, eax            ; move size of the string into edx
     mov     eax, 4              ; set stream as stdout
@@ -655,7 +656,7 @@ string_copy:
     mov     esi, [ebp + 8]      ; move arg1 into esi (address of the source string)
     mov     edi, [ebp + 12]     ; move arg2 into esi (address of the destination string)
     push    esi                 ; push esi into stack for procedure call
-    call    get_size             ; get size of the string
+    call    str_len             ; get size of the string
     pop     esi                 ; get esi back
     mov     ecx, eax            ; move size of the string into ecx
     inc     ecx                 ; include the null terminator
@@ -687,7 +688,7 @@ atoi_nt:
     push    ebx                 ; preserve
 
     push    dword [ebp + 8]     ; push address of array
-    call    get_size
+    call    str_len
     add     esp, 4
 
     push    eax
@@ -805,7 +806,7 @@ to_lower:
     mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
     mov     edi, esi            ; also move arg1 into edi
     push    esi                 ; push esi into stack for procedure call
-    call    get_size             ; get size of the string
+    call    str_len             ; get size of the string
     pop     esi                 ; get esi back
     mov     ecx, eax            ; move size of the string into ecx
 
@@ -848,7 +849,7 @@ to_upper:
     mov     esi, [ebp + 8]      ; move arg1 into esi (address of the string)
     mov     edi, esi            ; also move arg1 into edi
     push    esi                 ; push esi into stack for procedure call
-    call    get_size             ; get size of the string
+    call    str_len             ; get size of the string
     pop     esi                 ; get esi back
     mov     ecx, eax            ; move size of the string into ecx
 
