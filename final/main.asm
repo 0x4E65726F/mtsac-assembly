@@ -20,8 +20,6 @@ _start:
     add     esp, 8
     call    endl
     
-    call    current_time
-    call    srand
     call    rand
     push    buffer_sz
     push    buffer
