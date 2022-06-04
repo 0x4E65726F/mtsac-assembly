@@ -9,7 +9,7 @@ _start:
     mov     edi, dest       ; move destination string address into edi
 
     push    esi             ; push arg1
-    call    print_string
+    call    print_nt_string
     pop     esi             ; pop arg1
 
     push    edi             ; push arg2
@@ -19,11 +19,11 @@ _start:
     pop     edi             ; pop arg2
 
     push    edi             ; push arg1
-    call    print_string
+    call    print_nt_string
     call    to_upper
-    call    print_string
+    call    print_nt_string
     call    to_lower
-    call    print_string
+    call    print_nt_string
     pop     edi             ; pop arg1
 
     push    dword 0
@@ -47,7 +47,7 @@ section     .data
 
 ;     push    eax
 ;     push    buffer
-;     call    print_string
+;     call    print_nt_string
 ;     add     esp, 8
 ;     call    endl
     
@@ -60,7 +60,7 @@ section     .data
 
 ;     push    eax
 ;     push    buffer
-;     call    print_string
+;     call    print_nt_string
 ;     add     esp, 8
 ;     call    endl
 
@@ -84,7 +84,7 @@ section     .data
 
 ;     push    eax
 ;     push    buffer
-;     call    print_string
+;     call    print_nt_string
 ;     add     esp, 8
 ;     call    endl
 
@@ -105,7 +105,7 @@ section     .data
 
 ;     push    eax
 ;     push    buffer
-;     call    print_string
+;     call    print_nt_string
 ;     add     esp, 8
 ;     call    endl
 
