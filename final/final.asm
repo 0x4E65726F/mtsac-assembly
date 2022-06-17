@@ -173,7 +173,7 @@ process_buffer:
     mov     ebp, esp            ; start frame
     push    edi
 
-    mov     edi, buffer
+    mov     edi, buff
     mov     ecx, [ebp + 8]
 
     .loop:
