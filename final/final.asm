@@ -131,7 +131,7 @@ process_files:
     ; read a buffer load from in
     push    buff_sz
     push    buff
-    push    [in_fd]
+    push    dword [in_fd]
     call    file_read
     add     esp, 12
     
@@ -146,7 +146,7 @@ process_files:
     ; write it to out
     push    eax                 ; push arg3
     push    buff                ; push arg2
-    push    [out_fd]
+    push    dword [out_fd]
     call    file_write
     add     esp, 12
     jmp     .while
@@ -204,11 +204,11 @@ close_files:
     mov     ebp, esp            ; start frame
     
     ; close in file
-    push    [in_fd]
+    push    dword [in_fd]
     call    file_close
 
     ; close out file
-    push    [out_fd]
+    push    dword [out_fd]
     call    file_close
 
     leave
