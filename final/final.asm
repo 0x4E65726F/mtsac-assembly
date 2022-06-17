@@ -2,7 +2,7 @@
 ; what: Encrypt and Decrypt Rewind
 ; why: lab_final
 ; when: 2022-06-17
-%include    "main.inc"
+%include    "final.inc"
 
 section     .text
 
