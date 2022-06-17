@@ -1,19 +1,20 @@
+BIN = main
 
+all: $(BIN)
 
-main: library.o main.o
-	ld -m elf_i386 -o main library.o main.o
+$(BIN): library.o final.o
+	ld -m elf_i386 -o $@ $^
 
 library.o: library.asm
-	nasm -f elf -g library.asm
-
-main.o: main.asm
-	nasm -f elf -g main.asm
+	nasm -f elf -g $<
+final.o: final.asm final.inc
+	nasm -f elf -g $<
 
 clean: 
-	rm *.o main
+	rm *.o $(BIN)
 
 debug: main
-	gdb main
+	gdb $(BIN)
 
-run: main
-	./main
+run: final
+	./$(BIN)

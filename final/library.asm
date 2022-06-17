@@ -1010,7 +1010,7 @@ bin_search_d:
 file_open:  
 ;
 ; Description: Open a file for read
-; Receives: arg1: file path
+; Receives: arg1: file path, arg2: access mode
 ; Returns:  EAX = descriptor
 ; Requires: Nothing
 ; Note:     Nothing
@@ -1025,7 +1025,7 @@ file_open:
     
     mov     eax, 5              ; call sys_open
     mov     ebx, [ebp + 8]      ; file path
-    mov     ecx, 0              ; access mode (read only)
+    mov     ecx, [ebp + 12]     ; access mode
     mov     edx, 777o           ; perm
     int     80h
 
