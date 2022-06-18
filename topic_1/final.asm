@@ -1,7 +1,7 @@
 ; who: Nero Li, yli342
-; what: Encrypt and Decrypt Rewind
-; why: lab_final
-; when: 2022-06-17
+; what: <masked>
+; why: <masked>
+; when: <masked>
 %include    "final.inc"
 
 section     .text

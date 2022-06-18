@@ -1,4 +1,7 @@
 # mtsac-assembly
+These are the coding activities that I was doing during the Assembly Language classes.
+All information about class info has been masked, please get in touch with the repo owner for more information.
+The following text is the quick notes done during the class.
 ## Linux
 ```
 Path: address of a directory or file

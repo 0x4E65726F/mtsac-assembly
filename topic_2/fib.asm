@@ -1,7 +1,7 @@
 ; who: Nero Li, yli342
-; what: Calculate the first n values of the Fibonacci sequence.
-; why: project_1
-; when: 2022-03-30
+; what: <masked>
+; why: <masked>
+; when: <masked>
 
 section .text
 
